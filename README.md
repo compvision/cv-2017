@@ -13,6 +13,7 @@
 * Richard Mao
 
 ####Team Members
+* Sahith Konakalla
 * Andy Alawani
 * Daniel Santora
 * Dylan Santora
@@ -21,5 +22,4 @@
 * Joshua Samuel
 * Justin Davis
 * Robert Lee
-* Sahith Konakalla
 * Sarthak Madan
