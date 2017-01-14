@@ -1,27 +1,24 @@
-#ifndef TARGET_DETECTOR_H
-#define TARGET_DETECTOR_H
+#ifndef NetworkController_hpp
+#define NetworkController_hpp
 
-#include "Target.hpp"
-#include <opencv2/opencv.hpp>
-using namespace cv;
+#include <boost/asio.hpp>
 
-class TargetDetector
+class NetworkController
 {
-public:
-    TargetDetector();
-    Target* processImage(Mat input);
-    Mat getOutlinedImage();
-    //thresholds, cannies, contours, filters contours
-private:
-    Mat canny(Mat input);
-    Mat secretImage;
-
-    Mat originalSecretImage;
-    Mat thresholdImage(Mat input, int minHue, int maxHue, int minVal, int maxVal);
-
-    double angle(cv::Point p1, cv::Point p2, cv::Point p0);
-    std::vector<std::vector<Point> >  contour(Mat input);
-    std::vector<Point> filterContours(std::vector<std::vector<Point> > contours);
+    public:
+        NetworkController();
+        ~NetworkController();
+        void startServer();
+        void waitForPing();
+        void sendMessage(std::string message);
+    private:
+        int portNumber;
+        bool isInitialized;
+        boost::asio::io_service *io_service;
+        boost::asio::ip::tcp::acceptor *acceptor;
+        boost::asio::ip::tcp::socket *socket;
+        boost::system::error_code ignored_error;
+        boost::system::error_code error;
 };
 
-#endif
+#endif /* NetworkController_hpp  */
