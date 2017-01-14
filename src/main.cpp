@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 	TargetDetector detector;
 	TargetProcessor processor;
 	NetworkController networkController;
-  VideoDevice camera;
+  	VideoDevice camera;
 	CmdLineInterface interface(argc, argv);
 	AppConfig config = interface.getConfig();
 
@@ -58,10 +58,10 @@ int main(int argc, char* argv[])
 
 	        if(config.getIsDebug())
 	            std::cout << "Image Read" << std::endl;
-	        Target* targetC = new Target(detector.getTarget(image, true)); //gears
-					//Detects an image of cross with 12
-			Target* targetS =  new Target(detector.getTarget(image, false)); //boiler
-					//Detects an image of the high goal with 4 corners
+	        Target* targetC = new Target(detector.processImage(image, true)); //Gears
+					//Detects if Target matches Gear reflective tape
+			Target* targetS =  new Target(detector.processImage(image, false)); //Boiler
+	    				//Detects if Target matches Boiler reflective tape
 
 	        if(config.getIsDebug())
 	            std::cout << "Image Processed by Target Detector" << std::endl;
@@ -73,7 +73,8 @@ int main(int argc, char* argv[])
 	            foundGear = true;
 	        }
 
-					bool foundBoiler = false;
+		bool foundBoiler = false;
+	    
 	        if ((*targetS).m_contour.size() != 0)
 	        {
 	            foundBoiler = true;
@@ -87,8 +88,8 @@ int main(int argc, char* argv[])
 				if(config.getIsDebug())
 					std::cout << "Image Being Processed" << std::endl;
 
-					processor.loadTarget(targetS, 40.5, image);
-					// 56 should be changed to object's real width
+					processor.loadTarget(targetS, 15, image);
+					// middle value should be changed to object's real width (diameter of boiler is 15 in.)
 
 				if(config.getIsDebug())
 				    std::cout << "Target Loaded" << std::endl;
@@ -108,9 +109,9 @@ int main(int argc, char* argv[])
 				if(config.getIsDebug())
 					std::cout << "Image Processed by TargetProcessor" << std::endl;
 
-				std::string dis = "distance: " + std::to_string(distance);
-				std::string alt = "altitude: " + std::to_string(altitude);
-				std::string azi = "azimuth: " + std::to_string(azimuth);
+				std::string dis = "distance (Boiler): " + std::to_string(distance);
+				std::string alt = "altitude (Boiler): " + std::to_string(altitude);
+				std::string azi = "azimuth (Boiler): " + std::to_string(azimuth);
 
 				cv::putText(background, dis, cv::Point(50,100),
 				cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
@@ -120,7 +121,7 @@ int main(int argc, char* argv[])
 
 				cv::putText(background, azi, cv::Point(50,400),
 				cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
-
+				// for background
 				imshow("General", background);
 
 		     	if (config.getIsNetworking())
@@ -132,9 +133,9 @@ int main(int argc, char* argv[])
 				}
 
 				if(config.getIsDebug()){
-					std::cout << "Target Found! Distance: " << distance;
-					std::cout << "Altitude: " << altitude << std::endl;
-					std::cout << "Azimuth: " << azimuth << std::endl;
+					std::cout << "Target Found! Distance (Boiler): " << distance;
+					std::cout << "Altitude (Boiler): " << altitude << std::endl;
+					std::cout << "Azimuth (Boiler): " << azimuth << std::endl;
 				}
 
 			}
@@ -149,13 +150,11 @@ int main(int argc, char* argv[])
 
 	            std::cout <<"Gear was found " << std::endl;
 
-
-
 	            if(config.getIsDebug())
 	                std::cout << "Image Being Processed" << std::endl;
 
-	            processor.loadTarget(targetC, 35, image);
-							// 35 should be changed to the object's real width
+	            processor.loadTarget(targetC, 10.25, image);
+			// middle value should be changed to the object's real width (The width of the Gear "rectangle is 10.25 in.)
 
 	            if(config.getIsDebug())
 	                std::cout << "Target Loaded" << std::endl;
@@ -165,12 +164,8 @@ int main(int argc, char* argv[])
 	            if(config.getIsDebug())
 	                std::cout << "Distance Calculated" << std::endl;
 
-                  double maxX = target.maxX;
-                  double minX = target.minX;
-                  double maxY = target.maxY;
-                  double minX = target.minY;
-                  double Height = maxY-minY;
-                  double Width = maxX-minX;
+                  double Height = target.maxY-target.minY;
+                  double Width = target.maxX-target.minX;
 
                   double azimuth = processor.calcAzimuthX();
                         if(config.getIsDebug())
@@ -183,9 +178,9 @@ int main(int argc, char* argv[])
 	            if(config.getIsDebug())
 	                std::cout << "Image Processed by TargetProcessor" << std::endl;
 
-	                std::string dis = "distance: " + std::to_string(distance);
-	                std::string alt = "altitude: " + std::to_string(altitude);
-	                std::string azi = "azimuth: " + std::to_string(azimuth);
+	                std::string dis = "distance (Gear): " + std::to_string(distance);
+	                std::string alt = "altitude (Gear): " + std::to_string(altitude);
+	                std::string azi = "azimuth (Gear): " + std::to_string(azimuth);
 
 	                cv::putText(background, dis, cv::Point(50,100),
 	                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
@@ -198,7 +193,7 @@ int main(int argc, char* argv[])
 	                cv::putText(background, azi, cv::Point(50,400),
 	                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
 	                1);
-
+			//for background
 	                imshow("General", background);
 
 	            if (config.getIsNetworking())
@@ -211,11 +206,11 @@ int main(int argc, char* argv[])
 					}
 
 				if(config.getIsDebug()){
-	            	std::cout << "Target Found! Distance: " << distance;
-	                std::cout << "Altitude: " << altitude << std::endl;
-	                std::cout << "Azimuth: " << azimuth << std::endl;
+	            	std::cout << "Target Found! Distance (Gears): " << distance;
+	                std::cout << "Altitude (Gears): " << altitude << std::endl;
+	                std::cout << "Azimuth (Gears): " << azimuth << std::endl;
 	            }
-
+			//information to send (Networking)
 	        }
 	        else
 	        {
@@ -233,7 +228,8 @@ int main(int argc, char* argv[])
 
 	        loop++;
 	        delete targetC;
-					delete targetS;
+		delete targetS;
+	    //refresh loop
     }
 
     return 0;
