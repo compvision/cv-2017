@@ -28,6 +28,7 @@ private:
     //center vertical point
     int Tar;
 
+
 };
 
 #endif
