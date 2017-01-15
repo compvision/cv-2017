@@ -26,7 +26,7 @@ private:
     //center horizontal point of the picture
     double vertCenter;
     //center vertical point
-    int Tar;
+    bool Tar;
 
 
 };
