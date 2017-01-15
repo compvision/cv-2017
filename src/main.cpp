@@ -9,6 +9,7 @@
 #include "TargetProcessor.hpp"
 #include "NetworkController.hpp"
 #include "VideoDevice.hpp"
+#include "GUIManager.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -58,9 +59,9 @@ int main(int argc, char* argv[])
 
 	        if(config.getIsDebug())
 	            std::cout << "Image Read" << std::endl;
-	        Target* targetC = new Target(detector.processImage(image, true)); //Gears
+	        Target* targetG = new Target(detector.processImage(image, true)); //Gears
 					//Detects if Target matches Gear reflective tape
-			Target* targetS =  new Target(detector.processImage(image, false)); //Boiler
+			Target* targetB =  new Target(detector.processImage(image, false)); //Boiler
 	    				//Detects if Target matches Boiler reflective tape
 
 	        if(config.getIsDebug())
@@ -68,14 +69,14 @@ int main(int argc, char* argv[])
 
 	        bool foundGear = false;
 
-	        if ((*targetC).m_contour.size() != 0)
+	        if ((*targetG).m_contour.size() != 0)
 	        {
 	            foundGear = true;
 	        }
 
 		bool foundBoiler = false;
 	    
-	        if ((*targetS).m_contour.size() != 0)
+	        if ((*targetB).m_contour.size() != 0)
 	        {
 	            foundBoiler = true;
 	        }
@@ -98,11 +99,11 @@ int main(int argc, char* argv[])
 				if(config.getIsDebug())
 					std::cout << "Distance Calculated" << std::endl;
 
-				double azimuth = processor.calcAzimuthX();
+				double azimuth = processor.calcAzimuth();
 				if(config.getIsDebug())
 					std::cout << "Azimuth Calculated" << std::endl;
 
-				double altitude = processor.calcAzimuthY();
+				double altitude = processor.calcAltitude();
 				if(config.getIsDebug())
 					std::cout << "Altitude Calculated" << std::endl;
 
@@ -167,11 +168,11 @@ int main(int argc, char* argv[])
                   double Height = target.maxY-target.minY;
                   double Width = target.maxX-target.minX;
 
-                  double azimuth = processor.calcAzimuthX();
+                  double azimuth = processor.calcAzimuth();
                         if(config.getIsDebug())
                             std::cout << "Azimuth Calculated" << std::endl;
 
-                  double altitude = processor.calcAzimuthY();
+                  double altitude = processor.calcAltitude);
                         if(config.getIsDebug())
                             std::cout << "Altitude Calculated" << std::endl;
 
@@ -227,8 +228,8 @@ int main(int argc, char* argv[])
 
 
 	        loop++;
-	        delete targetC;
-		delete targetS;
+	        delete targetG;
+		delete targetB;
 	    //refresh loop
     }
 
