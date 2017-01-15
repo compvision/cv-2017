@@ -9,7 +9,7 @@ class TargetProcessor
 public:
     TargetProcessor();
     void loadTarget(Target* target);
-    int calculateTarget();
+    void temporaryGetPoints(int Width, int Height, int Center)
     double calculateDistance();
     double calculateAzimuth();
     double calculateAltitude();
