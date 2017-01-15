@@ -4,11 +4,12 @@
 #include <iostream>
 
 
-Target::Target(std::vector<cv::Point> contour)
+Target::Target(std::vector<std::vector<cv::Point>> contour)
 {
-    edge = contour;
+    edgeL = contour[0];
+    edgeR = contour[1];
     //crap
-    std::cout << "EDGE" << edge.size();
+    //std::cout << "EDGE" << edge.size();
 
     //crow = 1415;
 }
@@ -58,16 +59,7 @@ void Target::printPoints() //debugging
 
 cv::Point Target::getCenter()//finds center point of target
 {
-    cv::Point center(0, 0);
-
-    int x = 0;
-    for(; x < edge.size(); x++)
-    {
-        center += edge.at(x);
-    }
-    //center /= x;
-    center.x /= x;
-    center.y /= x;
+    cv::Point center((getLeftPoint + getRightPoint)/2, (getTopPoint + getBottomPoint)/2);
     //will discuss better changes next time we meet
     return center;
 }
@@ -75,11 +67,11 @@ cv::Point Target::getCenter()//finds center point of target
 cv::Point Target::getTopPoint()
 {
     cv::Point max(0,0);
-    for(unsigned int i = 0; i < edge.size(); i++)
+    for(unsigned int i = 0; i < edgeL.size(); i++)
     {
-        if(edge[i].y > max.y)
+        if(edgeL[i].y > max.y)
         {
-            max = edge[i];
+            max = edgeL[i];
         }
     }
     return max;
@@ -87,11 +79,11 @@ cv::Point Target::getTopPoint()
 cv::Point Target::getBottomPoint()
 {
     cv::Point min(10000,10000);
-    for(unsigned int i = 0; i < edge.size(); i++)
+    for(unsigned int i = 0; i < edgeL.size(); i++)
     {
-        if(edge[i].y < min.y)
+        if(edgeL[i].y < min.y)
         {
-            min = edge[i];
+            min = edgeL[i];
         }
     }
     return min;
@@ -99,11 +91,11 @@ cv::Point Target::getBottomPoint()
 cv::Point Target::getLeftPoint()
 {
     cv::Point min(0,0);
-    for(unsigned int i = 0; i < edge.size(); i++)
+    for(unsigned int i = 0; i < edgeL.size(); i++)
     {
-        if(edge[i].x > min.x)
+        if(edgeL[i].x > min.x)
         {
-            min = edge[i];
+            min = edgeL[i];
         }
     }
     return min;
@@ -111,11 +103,11 @@ cv::Point Target::getLeftPoint()
 cv:: Point Target::getRightPoint()
 {
     cv::Point max(10000,10000);
-    for(unsigned int i = 0; i < edge.size(); i++)
+    for(unsigned int i = 0; i < edgeR.size(); i++)
     {
-        if(edge[i].x < max.x)
+        if(edgeR[i].x < max.x)
         {
-            max = edge[i];
+            max = edgeR[i];
         }
     }
     return max;

@@ -16,7 +16,8 @@ private:
     Mat canny(Mat input);
     double angle(cv::Point p1, cv::Point p2, cv::Point p0);
     std::vector<std::vector<Point> >  contour(Mat input);
-    std::vector<Point> filterContours(std::vector<std::vector<Point> > contours, bool tar);
+    std::vector<std::vector<Point> > fullContour;
+    std::vector<std::vector<Point> > filterContours(std::vector<std::vector<Point> > contours, bool tar);
 };
 
 #endif

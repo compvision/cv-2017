@@ -6,7 +6,7 @@ using namespace cv;
 class Target
 {
 public:
-    Target(std::vector<Point> contour);
+    Target(std::vector<std::vector<Point>> contour);
     double getHeight();
     double getWidth();
     void printPoints();
@@ -20,7 +20,8 @@ private:
     Point getBottomPoint();
     Point getLeftPoint();
     Point getRightPoint();
-    std::vector<Point> edge;
+    std::vector<Point> edgeL;
+    std::vector<Point> edgeR;
     bool Tar;
 };
 
