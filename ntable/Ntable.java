@@ -52,7 +52,7 @@ class NTable
                     System.out.println("Azimuth: " + azimuth); 
 					System.out.println("Altitude: " + altitude); 
                     System.out.println(); 
-                    table.putBoolean("toteFound", true);
+                    table.putBoolean("Boiler found!", true);
                     table.putNumber("distance_m", distance);
                     table.putNumber("azimuth_deg", azimuth);
 					table.putNumber("altitude_deg", altitude);

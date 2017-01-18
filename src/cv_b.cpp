@@ -29,16 +29,56 @@ int main(int argc, char* argv[])
     {
         networkController.waitForPing();
 
-        bool foundTarget = true; 
+        bool foundGear = true; 
+		bool foundBoiler = false;
 
-        if(foundTarget)
+		std::string msg = "";
+		
+		std::string gear, boiler;
+		
+		double distance = 10.0;
+		double azimuth = 3.46;
+		double altitude = 2.34;
+
+		double bdistance = 7.46;
+		double bazimuth  = 5.42;
+		double baltitude = 1.36;
+
+		//gear value logic
+		if(foundGear)
+		{
+			gear = "true;";
+		}
+		else if(!foundGear)
+		{
+			gear = "false;";
+		}
+
+		//boiler value logic
+		if(foundBoiler)
+		{
+			boiler = "true;";
+		}
+		else if(!foundBoiler)
+		{
+			boiler = "false;";
+		}
+
+		msg.append(gear + boiler + boost::lexical_cast<std::string> (distance) + ";" + boost::lexical_cast<std::string> (azimuth) + ";" + boost::lexical_cast<std::string> (altitude) + ";" + boost::lexical_cast<std::string> (bdistance) + ";" + boost::lexical_cast<std::string> (bazimuth) + ";" + boost::lexical_cast<std::string> (baltitude) + ";");
+
+        if(foundGear || foundBoiler)
         {
-            double distance = 10.0;
 
-            networkController.sendMessage("true;" +
-                boost::lexical_cast<std::string> (distance));
-                
-            std::cout << "Target Found! Distance: " << distance;
+            networkController.sendMessage(msg);
+			//determines whether or not to send the distance of the boiler or gear            
+			if(foundGear)
+			{    
+            	std::cout << "Gear Found! Distance: " << distance;
+			}
+			else if (foundBoiler)
+			{
+				std::cout << "Boiler Found! Distance: " << bdistance;
+			}
         }
         else
         {
