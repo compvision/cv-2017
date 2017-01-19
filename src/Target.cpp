@@ -4,19 +4,23 @@
 #include <iostream>
 
 
-Target::Target(std::vector<std::vector<cv::Point>> contour)
+Target::Target(std::vector<std::vector<cv::Point> > contour)
 {
     edgeL = contour[0];
     edgeR = contour[1];
-    //crap
-    //std::cout << "EDGE" << edge.size();
-
-    //crow = 1415;
+    //splits the inputted vector into two shapes again
 }
+
 
 void Target::setTar(bool tar) {
 
     Tar = tar;
+}
+
+bool Target::getTar() {
+
+    return Tar;
+
 }
 
 double Target::getHeight()
@@ -29,6 +33,7 @@ double Target::getWidth()
     return fabs(getRightPoint().x - getLeftPoint().x);
 }
 
+//True if Gears, False if Boilers
 bool Target::getType() {
   if (getHeight() > getWidth()) {
     return true;
@@ -59,8 +64,7 @@ void Target::printPoints() //debugging
 
 cv::Point Target::getCenter()//finds center point of target
 {
-    cv::Point center((getLeftPoint + getRightPoint)/2, (getTopPoint + getBottomPoint)/2);
-    //will discuss better changes next time we meet
+    cv::Point center((getLeftPoint().x + getRightPoint().x)/2, (getTopPoint().y + getBottomPoint().y)/2);
     return center;
 }
 
@@ -100,6 +104,7 @@ cv::Point Target::getLeftPoint()
     }
     return min;
 }
+// Uses the right shape for right most point in order to pretend like it's one big shape
 cv:: Point Target::getRightPoint()
 {
     cv::Point max(10000,10000);

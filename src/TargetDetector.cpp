@@ -8,8 +8,6 @@ TargetDetector::TargetDetector() {
 }
 
 Target* TargetDetector::processImage(Mat input, bool tar) {
-  Target* toReturn = new Target(finalContour);
-  toReturn -> setTar(tar);
     input = thresholdImage(input, 0, 102, 227, 255);
     dilate(input, input, Mat());
 
@@ -80,8 +78,8 @@ double TargetDetector::angle(cv::Point p1, cv::Point p2, cv::Point p0) {
     return atan(dy1/dx1)-atan(dy2/dx2); //in rad
 }
 
-std::vector<Point> TargetDetector::filterContours(std::vector<std::vector<Point> > contours, bool tar) {
-
+std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std::vector<Point> > contours, bool tar) {
+//bool tar: true = gears, false = boiler
     for(unsigned int j = 0; j < contours.size(); j++)
     {
         std::vector<Point> outputContour;
@@ -91,7 +89,7 @@ std::vector<Point> TargetDetector::filterContours(std::vector<std::vector<Point>
 
         if (contourArea(outputContour) > 100 && outputContour.size() == 4) {
             double maxCosine = 0;
-            int tarNum = 0
+            int tarNum = 0;
             for(int j = 2; j <=4; j++)
             {
                 double cosine;
@@ -107,41 +105,50 @@ std::vector<Point> TargetDetector::filterContours(std::vector<std::vector<Point>
             if(maxCosine < .2)
 
             {
-              std::vector<cv::Point> outputContour1
-              std::vector<cv::Point> outputContour2
-              std::Vector<cv::Point> * left;
-              std::Vector<cv::Point> * right;
-              Target target(outputContour);
-              if (tar = target.getType() && tar = true && tarNum = 0) {
+              int tarNum = 0;
+              std::vector<cv::Point> outputContour1;
+              std::vector<cv::Point> outputContour2;
+              // Left and Right Outputs
+              //std::vector<cv::Point> left; /*for testing*/
+              //std::vector<cv::Point> right;
+              std::vector<std::vector<cv::Point> > tempVV;
+              //std::vector<cv::Point> tempV; /*for testing*/
+              //tempV = outputContour;
+              tempVV.push_back (outputContour);
+              tempVV.push_back (outputContour);
+              // TempV is put in twice to the tempVV vector to serve as a placeholder
+
+              Target target(tempVV);
+              // TempVV is temporary and is used to call getType
+              /* if the target called by the main is the same as the one found
+                 and if it is gears on first time*/
+              if (tar == target.getType() && tar == true && tarNum == 0) {
                 outputContour1 = outputContour;
                 tarNum += 1;
-              } else if (tar = target.getType() && tar = true && tarNum = 1) {
+              }
+              // Gears on second try
+              else if (tar == target.getType() && tar == true && tarNum == 1) {
                 outputContour2 = outputContour;
-
+                tarNum = 0;
+                // whichever has the least has the left most points
                 if (outputContour1[1].x > outputContour2[1].x) {
-                  left = &outputContour2
-                  right = &outputContour1
+                  fullContour.push_back (outputContour2); // first will be left, then right
+                  fullContour.push_back (outputContour1);
                 } else {
-                  left = &outputContour1
-                  right = &outputContour2
+                  fullContour.push_back (outputContour1);
+                  fullContour.push_back (outputContour2);
                 }
 
-                fullContour.push_back (left);
-                fullContour.push_back (right);
-
                 return fullContour;
               }
-              if (tar = target.getType() && tar = false) {
+              //if boiler was called
+              if (tar = target.getType() && tar == false) {
 
-                left = &outputContour
-                right = &outputContour
-
-                fullContour.push_back (left);
-                fullContour.push_back (right);
+                fullContour.push_back (outputContour);
+                fullContour.push_back (outputContour);
+                // Both contours are the same as to not need two target constructors
 
                 return fullContour;
-              }
-
               }
 
             }
@@ -151,5 +158,5 @@ std::vector<Point> TargetDetector::filterContours(std::vector<std::vector<Point>
     }
 
 
-    return std::vector<Point>();
+    return std::vector<std::vector<Point> >();
 }
