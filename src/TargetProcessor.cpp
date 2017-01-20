@@ -19,6 +19,14 @@ void TargetProcessor::loadTarget(Target* target){
     Tar = target->getTar();
 }
 
+
+void TargetProcessor::temporaryGetPoints(int width, int height, cv::Point center){
+    imageTarWidth = width;
+    imageTarHeight = height;
+    imageTarCenter = center;
+    Tar = 1;
+}
+
 double TargetProcessor::calculateDistance(){
     if(Tar){
         return BoilerWidth * focalLength / imageTarWidth; //returns the distance (m)
