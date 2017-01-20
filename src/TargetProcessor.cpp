@@ -13,17 +13,17 @@ TargetProcessor::TargetProcessor()
 } //constructor
 
 void TargetProcessor::loadTarget(Target* target){
-    //imageTarWidth = target->getWidth();
-    //imageTarHeight = target->getHeight();
-    //imageTarCenter = target->getCenter();
-    //Tar = target->getTar();
+    imageTarWidth = target->getWidth();
+    imageTarHeight = target->getHeight();
+    imageTarCenter = target->getCenter();
+    Tar = target->getTar();
 }
 
-void TargetProcessor::temporaryGetPoints(Width, Height, Center){
-    imageTarWidth = Width;
-    imageTarHeight = Height;
-    imageTarCenter = Center;
-    //This is a temporary way to insert points for testing purposes
+void TargetProcessor::temporaryGetPoints(int width, int height, cv::Point center){
+    imageTarWidth = width;
+    imageTarHeight = height;
+    imageTarCenter = center;
+    Tar = 1;
 }
 
 double TargetProcessor::calculateDistance(){

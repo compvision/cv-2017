@@ -68,8 +68,10 @@ int main(){
                         minY = output[i].y();
                     }
                 }
-                processor.temporaryGetPoints((maxX - minX), (maxY - minY), );
-                int Tar = processor.calculateTarget();
+                cv::Point center;
+                center.x = (maxX + minX)/2;
+                center.y = (maxY + minY)/2;
+                processor.temporaryGetPoints((maxX - minX), (maxY - minY), center);
                 int Distance = processor.calculateDistance();
                 int Azimuth = processor.calculateAzimuth();
                 int Altitude = processor.calculateAltitude();
