@@ -19,6 +19,7 @@ void TargetProcessor::loadTarget(Target* target){
     Tar = target->getTar();
 }
 
+
 void TargetProcessor::temporaryGetPoints(int width, int height, cv::Point center){
     imageTarWidth = width;
     imageTarHeight = height;
