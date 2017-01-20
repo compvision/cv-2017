@@ -29,3 +29,4 @@
 *.app
 
 build/*
+src/build/*
