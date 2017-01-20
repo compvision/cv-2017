@@ -2,24 +2,20 @@
 #include <opencv2/opencv.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "CmdLineInterface.hpp"
-#include"AppConfig.hpp"
 #include "NetworkController.hpp"
-#include "VideoDevice.hpp"
-#include "GUIManager.hpp"
-int main(int argc, char* argv[])
+int main(/*int argc, char* argv[]*/)
 {
     // Create all the necessary objects (calls the default constructor for each)
-    
+	std::cout << "test" << std::endl;
     NetworkController networkController;
 	//CmdLineInterface interface(argc, argv);		
 	//AppConfig config = interface.getConfig();
 	//GUIManager gui;
-
+	std::cout << "test2" << std::endl;
     //init networking
     //if(config.getIsNetworking())
-        networkController.startServer();
-
+    networkController.startServer();
+	std::cout << "test3" << std::endl;
     //if(!config.getIsHeadless())
      //   gui.init();
     //if(config.getIsDebug())
@@ -27,6 +23,7 @@ int main(int argc, char* argv[])
 
     while(true)
     {
+		std::cout << "Im here2";
         networkController.waitForPing();
 
         bool foundGear = true; 
@@ -66,6 +63,7 @@ int main(int argc, char* argv[])
 
 		msg.append(gear + boiler + boost::lexical_cast<std::string> (distance) + ";" + boost::lexical_cast<std::string> (azimuth) + ";" + boost::lexical_cast<std::string> (altitude) + ";" + boost::lexical_cast<std::string> (bdistance) + ";" + boost::lexical_cast<std::string> (bazimuth) + ";" + boost::lexical_cast<std::string> (baltitude) + ";");
 
+		//std::cout << msg << std::endl;
         if(foundGear || foundBoiler)
         {
 

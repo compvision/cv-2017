@@ -4,10 +4,6 @@
 CMakeFiles/cv-net.dir/NetworkController.o: ../NetworkController.cpp
 CMakeFiles/cv-net.dir/NetworkController.o: ../NetworkController.hpp
 
-CMakeFiles/cv-net.dir/cv_b.o: ../AppConfig.hpp
-CMakeFiles/cv-net.dir/cv_b.o: ../CmdLineInterface.hpp
-CMakeFiles/cv-net.dir/cv_b.o: ../GUIManager.hpp
 CMakeFiles/cv-net.dir/cv_b.o: ../NetworkController.hpp
-CMakeFiles/cv-net.dir/cv_b.o: ../VideoDevice.hpp
 CMakeFiles/cv-net.dir/cv_b.o: ../cv_b.cpp
 
