@@ -10,6 +10,20 @@
 #include "NetworkController.hpp"
 #include "VideoDevice.hpp"
 #include "GUIManager.hpp"
+#include <string>
+#include <sstream>
+
+namespace patch
+{
+    template < typename T > std::string to_string( const T& n )
+    {
+        std::ostringstream stm ;
+        stm << n ;
+        return stm.str() ;
+    }
+}
+
+#include <iostream>
 
 int main(int argc, char* argv[])
 {
@@ -17,7 +31,7 @@ int main(int argc, char* argv[])
 	TargetDetector detector;
 	TargetProcessor processor;
 	NetworkController networkController;
-  	VideoDevice camera;
+  VideoDevice camera;
 	CmdLineInterface interface(argc, argv);
 	AppConfig config = interface.getConfig();
 
@@ -59,9 +73,9 @@ int main(int argc, char* argv[])
 
 	        if(config.getIsDebug())
 	            std::cout << "Image Read" << std::endl;
-	        Target* targetG = new Target(detector.processImage(image, true)); //Gears
+	        Target* targetG = detector.processImage(image, true); //Gears
 					//Detects if Target matches Gear reflective tape
-			Target* targetB =  new Target(detector.processImage(image, false)); //Boiler
+					Target* targetB = detector.processImage(image, false); //Boiler
 	    				//Detects if Target matches Boiler reflective tape
 
 	        if(config.getIsDebug())
@@ -74,8 +88,8 @@ int main(int argc, char* argv[])
 	        {
 	            foundGear = true;
 	        } */
-					bool typeG = targetG.getType();
-					bool typeB = targetB.getType();
+					bool typeG = targetG -> getType();
+					bool typeB = targetB -> getType();
 
 					if (typeG==true)
 					{
@@ -109,7 +123,7 @@ int main(int argc, char* argv[])
 				if(config.getIsDebug())
 					std::cout << "Image Being Processed" << std::endl;
 
-					processor.loadTarget(targetS, 15, image);
+					processor.loadTarget(targetB);
 					// middle value should be changed to object's real width (diameter of boiler is 15 in.)
 
 				if(config.getIsDebug())
@@ -130,9 +144,9 @@ int main(int argc, char* argv[])
 				if(config.getIsDebug())
 					std::cout << "Image Processed by TargetProcessor" << std::endl;
 
-				std::string dis = "distance (Boiler): " + std::to_string(distance);
-				std::string alt = "altitude (Boiler): " + std::to_string(altitude);
-				std::string azi = "azimuth (Boiler): " + std::to_string(azimuth);
+				std::string dis = "distance (Boiler): " + patch::to_string(distance);
+				std::string alt = "altitude (Boiler): " + patch::to_string(altitude);
+				std::string azi = "azimuth (Boiler): " + patch::to_string(azimuth);
 
 				cv::putText(background, dis, cv::Point(50,100),
 				cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
@@ -174,7 +188,7 @@ int main(int argc, char* argv[])
 	            if(config.getIsDebug())
 	                std::cout << "Image Being Processed" << std::endl;
 
-	            processor.loadTarget(targetC, 10.25, image);
+	            processor.loadTarget(targetG);
 			// middle value should be changed to the object's real width (The width of the Gear "rectangle is 10.25 in.)
 
 	            if(config.getIsDebug())
@@ -185,23 +199,21 @@ int main(int argc, char* argv[])
 	            if(config.getIsDebug())
 	                std::cout << "Distance Calculated" << std::endl;
 
-                  double Height = target.maxY-target.minY;
-                  double Width = target.maxX-target.minX;
 
                   double azimuth = processor.calculateAzimuth();
                         if(config.getIsDebug())
                             std::cout << "Azimuth Calculated" << std::endl;
 
-                  double altitude = processor.calculateAltitude);
+                  double altitude = processor.calculateAltitude();
                         if(config.getIsDebug())
                             std::cout << "Altitude Calculated" << std::endl;
 
 	            if(config.getIsDebug())
 	                std::cout << "Image Processed by TargetProcessor" << std::endl;
 
-	                std::string dis = "distance (Gear): " + std::to_string(distance);
-	                std::string alt = "altitude (Gear): " + std::to_string(altitude);
-	                std::string azi = "azimuth (Gear): " + std::to_string(azimuth);
+	                std::string dis = "distance (Gear): " + patch::to_string(distance);
+	                std::string alt = "altitude (Gear): " + patch::to_string(altitude);
+	                std::string azi = "azimuth (Gear): " + patch::to_string(azimuth);
 
 	                cv::putText(background, dis, cv::Point(50,100),
 	                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
