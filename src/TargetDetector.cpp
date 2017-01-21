@@ -15,7 +15,6 @@ Target* TargetDetector::processImage(Mat input, bool tar) {
 
     std::vector<std::vector<Point> > contours = contour(input);
     // std::cout << "not contours" << std::endl;
-    std::cout << "Tar1: " << tar << std::endl;
     std::vector<std::vector<Point> > finalContour = filterContours(contours, tar);
 
 
@@ -187,17 +186,14 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
               /* if the target called by the main is the same as the one found
                  and if it is gears on first time*/
               std::cout << "Type: " << target->getType() << std::endl;
-              std::cout << "Tar2: " << tar << std::endl;
               if (tar == target->getType() && tar == true && tarNum == 0) {
                 outputContour1 = outputContour;
                 tarNum = 1;
-                std::cout << "Hi1" << std::endl;
               }
               // Gears on second try
               if (tar == target->getType() && tar == true && tarNum == 1) {
                 outputContour2 = outputContour;
                 tarNum = 0;
-                std::cout << "Hi2" << std::endl;
                 // whichever has the least has the left most points
                 if (outputContour1[1].x > outputContour2[1].x) {
                   fullContour.push_back (outputContour2); // first will be left, then right
