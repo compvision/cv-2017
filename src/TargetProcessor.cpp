@@ -12,19 +12,19 @@ TargetProcessor::TargetProcessor()
 
 } //constructor
 
-void TargetProcessor::loadTarget(Target* target){
+/*void TargetProcessor::loadTarget(Target* target){
     imageTarWidth = target->getWidth();
     imageTarHeight = target->getHeight();
     imageTarCenter = target->getCenter();
     Tar = target->getTar();
-}
+}*/
 
 
 void TargetProcessor::temporaryGetPoints(int width, int height, cv::Point center){
     imageTarWidth = width;
     imageTarHeight = height;
     imageTarCenter = center;
-    Tar = 1;
+    Tar = true;
 }
 
 double TargetProcessor::calculateDistance(){
@@ -35,12 +35,12 @@ double TargetProcessor::calculateDistance(){
     }
 }
 
-double TargetProcessor::calculateAzimuth() //unsure if this is working properly, but is returning a reasonable looking value{
+double TargetProcessor::calculateAzimuth(){ //unsure if this is working properly, but is returning a reasonable looking value{
     double offset = imageTarCenter.x - horizCenter;
     return (atan(offset/focalLength))*(180/M_PI); //in degrees
 }
 
-double TargetProcessor::calculateAltitude() //same comment as calculateAzimuth(){
+double TargetProcessor::calculateAltitude(){ //same comment as calculateAzimuth(){
     int cameraAngle = 0; //angle the camera is pointing up from the horizon; assumes camera is level
     double offset =  vertCenter - imageTarCenter.y;
     return (atan(offset/focalLength))*(180/M_PI) + cameraAngle; //in degrees

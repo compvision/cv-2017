@@ -5,7 +5,9 @@
 
 using namespace std;
 
-cv::Mat processor(cv::Mat image, int lower, int upper){
+int Altitude, Azimuth, Distance;
+
+cv::Mat processor2(cv::Mat image, int lower, int upper){
 
     /*
     This function uses a given image, converts the given image into HSV,
@@ -19,15 +21,16 @@ cv::Mat processor(cv::Mat image, int lower, int upper){
     vector<cv::Mat> HSVChannels;
     cv::split(imageHSV, HSVChannels);
 
-    cv::Mat imageHue = HSVChannels.at(0).clone;
+    cv::Mat imageHue = HSVChannels.at(0).clone();
 
     cv::Mat imageLower, imageUpper, imageResult;
     cv::threshold(imageHue, imageLower, lower, 255, CV_THRESH_BINARY);
-    cv::threshold(imageHue, imageHigher, higher, 255, CV_THRESH_BINARY_INV);
-    imageResult = imageLower & imageHigher;
+    cv::threshold(imageHue, imageUpper, upper, 255, CV_THRESH_BINARY_INV);
+    imageResult = imageLower & imageUpper;
 
-    Return imageResult;
+    return imageResult;
 }
+
 
 int main(){
     TargetProcessor processor;
@@ -39,9 +42,9 @@ int main(){
 
     for(;;){
         cv::Mat rawImg;
-        cv::cap >> rawImg;
+        cap >> rawImg;
 
-        cv::Mat processedImg = processor(rawImg, 25, 50);
+        cv::Mat processedImg = processor2(rawImg, 25, 50);
         cv::Canny(processedImg, processedImg, 20, 80);
 
         vector<vector<cv::Point> > contours;
@@ -55,34 +58,35 @@ int main(){
             if(output.size() == 4 && cv::contourArea(output) > 100){
                 int maxX = 0, minX = 10000, maxY = 0, minY = 10000;
                 for(int i = 0; i < contours.size(); i++){
-                    if(output[i].x() > maxX){
-                        maxX = output[i].x();
+                    if(output[i].x > maxX){
+                        maxX = output[i].x;
                     }
-                    if(output[i].x() < minX){
-                        minX = output[i].x();
+                    if(output[i].x < minX){
+                        minX = output[i].x;
                     }
-                    if(output[i].y() > maxY){
-                        maxY = output[i].y();
+                    if(output[i].y > maxY){
+                        maxY = output[i].y;
                     }
-                    if(output[i].y() < minY){
-                        minY = output[i].y();
+                    if(output[i].y < minY){
+                        minY = output[i].y;
                     }
                 }
                 cv::Point center;
                 center.x = (maxX + minX)/2;
                 center.y = (maxY + minY)/2;
                 processor.temporaryGetPoints((maxX - minX), (maxY - minY), center);
-                int Distance = processor.calculateDistance();
-                int Azimuth = processor.calculateAzimuth();
-                int Altitude = processor.calculateAltitude();
+                Distance = processor.calculateDistance();
+                Azimuth = processor.calculateAzimuth();
+                Altitude = processor.calculateAltitude();
             }
         }
 
-        cv::putText(rawImg, "Distance: " + Distance, (10, 10), FONT_HERSHEY_SCRIPT_SIMPLEX, 2, Scalar::all(255), 3, 8);
-        cv::putText(rawImg, "Azimuth: " + Azimuth, (10, 30), FONT_HERSHEY_SCRIPT_SIMPLEX, 2, Scalar::all(255), 3, 8);
-        cv::putText(rawImg, "Altitude: " + Altitude, (10, 50), FONT_HERSHEY_SCRIPT_SIMPLEX, 2, Scalar::all(255), 3, 8);
+        ;
+        cv::putText(rawImg, "Distance: " + Distance, cv::Point(10, 10), FONT_HERSHEY_SCRIPT_SIMPLEX, 2, Scalar::all(255), 3, 8);
+        cv::putText(rawImg, "Azimuth: " + Azimuth, cv::Point(10, 30), FONT_HERSHEY_SCRIPT_SIMPLEX, 2, Scalar::all(255), 3, 8);
+        cv::putText(rawImg, "Altitude: " + Altitude, cv::Point(10, 50), FONT_HERSHEY_SCRIPT_SIMPLEX, 2, Scalar::all(255), 3, 8);
         cv::imshow("Data", rawImg);
-        if(cv::WaitKey(30) >= 0)
+        if(waitKey(30) >= 0)
             break;
     }
     return 0;
