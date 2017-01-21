@@ -9,7 +9,7 @@ TargetDetector::TargetDetector() {
 
 Target* TargetDetector::processImage(Mat input, bool tar) {
     GaussianBlur(input,input,Size(3,3),1,1);
-    input = thresholdImage(input, 0, 102, 227, 255);
+    input = canny(thresholdImage(input,53,58,0,255,228,238));
     imshow("Thresholded",input);
     dilate(input, input, Mat());
 
@@ -34,11 +34,12 @@ Mat TargetDetector::canny(Mat input) {
 }
 
 
-Mat TargetDetector::thresholdImage(Mat input, int minHue, int maxHue, int minVal, int maxVal) {
+Mat TargetDetector::thresholdImage(Mat input, int minHue, int maxHue, int minSat, int maxSat, int minVal, int maxVal) {
     //defining variables
     Mat threshLow;
     Mat threshHigh;
     Mat hueResult;
+    Mat satResult;
     Mat valResult;
 
     //seperating image into HSV (or in this case, really just HV)
@@ -48,19 +49,25 @@ Mat TargetDetector::thresholdImage(Mat input, int minHue, int maxHue, int minVal
     std::vector<cv::Mat> separated(3);
     cv::split(cvted, separated);
     Mat hue = separated.at(0).clone();
+    Mat sat = separated.at(1).clone();
     Mat val = separated.at(2).clone();
 
     //Hue
-    threshold(hue, threshLow, minHue, 25, THRESH_BINARY);
-    threshold(hue, threshHigh, maxHue, 50, THRESH_BINARY_INV);
+    threshold(hue, threshLow, minHue, 255, THRESH_BINARY);
+    threshold(hue, threshHigh, maxHue, 255, THRESH_BINARY_INV);
     hueResult = threshLow & threshHigh;
+
+    //Saturation
+    threshold(sat, threshLow, minSat, 255, THRESH_BINARY);
+    threshold(sat, threshHigh, maxSat, 255, THRESH_BINARY_INV);
+    satResult = threshLow & threshHigh;
 
     //Value
     threshold(val, threshLow, minVal, 255, THRESH_BINARY);
     threshold(val, threshHigh, maxVal, 255, THRESH_BINARY_INV);
     valResult = threshLow & threshHigh;
 
-    Mat combined = hueResult & valResult;
+    Mat combined = hueResult & valResult & satResult;
 
     return combined;
 }
@@ -80,14 +87,57 @@ double TargetDetector::angle(cv::Point p1, cv::Point p2, cv::Point p0) {
     return atan(dy1/dx1)-atan(dy2/dx2); //in rad
 }
 
+std::vector<Point> TargetDetector::arcCheck1(std::vector<Point> input)
+{
+  double max = input[0].x;
+  double min = input[0].x;
+  std::vector<Point> output;
+
+  for (int i = 0; i < input.size(); i++)
+  {
+    if (input[i].x > max)
+    {
+      max = input[i].x;
+    }
+    if (input[i].x < min)
+    {
+      min = input[i].x;
+    }
+  }
+  cv::Point New(0,0);
+  for (int i = 0; i < input.size(); i++)
+  {
+    if (input[i].x > max - 5 && input[i].x < max + 5)
+    {
+      New = input[i];
+      output.push_back (New);
+    }
+    if (input[i].x > min - 5 && input[i].x < min + 5)
+    {
+      New = input[i];
+      output.push_back (New);
+    }
+
+  }
+  return output;
+}
+
 std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std::vector<Point> > contours, bool tar)
 {
 //bool tar: true = gears, false = boiler
-    for(unsigned int j = 0; j < contours.size(); j++)
+  std::vector<Point> arcContour;
+  std::vector<Point> outputContour;
+    for(int j = 0; j < contours.size(); j++)
     {
-        std::vector<Point> outputContour;
 
+      if (tar = false)
+      {
+        arcContour = arcCheck1(contours[j]);
+        approxPolyDP(arcContour, outputContour, (cv::arcLength(cv::Mat(contours.at(j)), true) * 0.01), true);
+      } else
+      {
         approxPolyDP(contours[j], outputContour, (cv::arcLength(cv::Mat(contours.at(j)), true) * 0.01), true);
+      }
 
 
         if (contourArea(outputContour) > 100 && outputContour.size() == 4) {
@@ -157,9 +207,7 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
             }
 
         }
-        //
-    }
-
+      }
 
     return std::vector<std::vector<Point> >();
 }
