@@ -56,69 +56,73 @@ int main(int argc, char* argv[])
 			cv::Mat background(Size(1000,1000), CV_8UC1, Scalar(255, 255, 255 ));
 
 			std::string msg;
-	        if(config.getIsDebug())
-	            std::cout << "While Loop #" << loop << std::endl;
+	        if(config.getIsDenamespace patch
+					{
+    		 template < typename T > std::string to_string( const T& n )
+    		 {
+        		std::ostringstream stm ;
+        		stm << n ;
+        		return stm.str() ;
+    		 }
+		}
 
-			if(config.getIsNetworking())
-	      	networkController.waitForPing();
+		#include <iostream>bug())
+	      std::cout << "While Loop #" << loop << std::endl;
 
-			image = camera.getImage();
+				if(config.getIsNetworking())
+	    	networkController.waitForPing();
 
-			if(!image.data) // check if image is valid
-	        {
-	            if(config.getIsDebug())
-	                std::cout << "failed to read image" << std::endl;
-	            return -1;
-	        }
+				image = camera.getImage();
 
-	        if(config.getIsDebug())
-	            std::cout << "Image Read" << std::endl;
-	        Target* targetG = detector.processImage(image, true); //Gears
-					//Detects if Target matches Gear reflective tape
-					Target* targetB = detector.processImage(image, false); //Boiler
-	    				//Detects if Target matches Boiler reflective tape
+				if(!image.data) // check if image is valid
+	      {
+	          if(config.getIsDebug())
+	          std::cout << "failed to read image" << std::endl;
+	          return -1;
+	      }
 
-	        if(config.getIsDebug())
-	            std::cout << "Image Processed by Target Detector" << std::endl;
-
-	        bool foundGear = false;
-					bool foundBoiler = false;
+	      if(config.getIsDebug())
+	      std::cout << "Image Read" << std::endl;
+	      Target* targetG = detector.processImage(image, true); //Gears
+				//Detects if Target matches Gear reflective tape
+				Target* targetB = detector.processImage(image, false); //Boiler
+	    	//Detects if Target matches Boiler reflective tape
+      	if(config.getIsDebug())
+	      std::cout << "Image Processed by Target Detector" << std::endl;
+        bool foundGear = false;
+				bool foundBoiler = false;
 
 	        /* if ((*targetG).edgeL.size() != 0)
 	        {
 	            foundGear = true;
 	        } */
-					bool typeG = targetG -> getType();
-					bool typeB = targetB -> getType();
+  			bool typeG = targetG -> getType();
+				bool typeB = targetB -> getType();
 
-					if (typeG==true)
-					{
-							foundGear = true;
-					}
-					if (typeG==false)
-					{
-							foundGear = false;
-					}
-					if (typeB==true)
-					{
-							foundBoiler = true;
-					}
-					if (typeG==false)
-					{
-							foundBoiler = false;
-					}
+				if (typeG==true)
+				{
+						foundGear = true;
+				}
+	  		if (typeG==false)
+				{
+						foundGear = false;
+				}
+				if (typeB==true)
+				{
+						foundBoiler = true;
+				}
+				if (typeG==false)
+				{
+						foundBoiler = false;
+				}
+        /*if ((*targetB).contours.size() != 0)
+        {
+            foundBoiler = true;
+        }*/
+	  		std::cout <<"About to check the value of foundTarget" << std::endl;
 
-
-
-	        /*if ((*targetB).contours.size() != 0)
-	        {
-	            foundBoiler = true;
-	        }*/
-
-			std::cout <<"About to check the value of foundTarget" << std::endl;
-
-			if(foundBoiler)
-			{
+		    if(foundBoiler)
+			  {
 				std::cout <<"Boiler was found " << std::endl;
 				if(config.getIsDebug())
 					std::cout << "Image Being Processed" << std::endl;
@@ -159,7 +163,7 @@ int main(int argc, char* argv[])
 				// for background
 				imshow("General", background);
 
-		     	if (config.getIsNetworking())
+		    if (config.getIsNetworking())
 				{
 					msg.append("true;" +
 					boost::lexical_cast<std::string> (distance) + ";" +
@@ -182,31 +186,27 @@ int main(int argc, char* argv[])
 
 	        if(foundGear)
 	        {
+             std::cout <<"Gear was found " << std::endl;
+             if(config.getIsDebug())
+             std::cout << "Image Being Processed" << std::endl;
+             processor.loadTarget(targetG);
+      			// middle value should be changed to the object's real width (The width of the Gear "rectangle is 10.25 in.)
 
-	            std::cout <<"Gear was found " << std::endl;
+	          if(config.getIsDebug())
+	            std::cout << "Target Loaded" << std::endl;
 
-	            if(config.getIsDebug())
-	                std::cout << "Image Being Processed" << std::endl;
+	          double distance = processor.calculateDistance();
 
-	            processor.loadTarget(targetG);
-			// middle value should be changed to the object's real width (The width of the Gear "rectangle is 10.25 in.)
-
-	            if(config.getIsDebug())
-	                std::cout << "Target Loaded" << std::endl;
-
-	            double distance = processor.calculateDistance();
-
-	            if(config.getIsDebug())
+	          if(config.getIsDebug())
 	                std::cout << "Distance Calculated" << std::endl;
 
-
                   double azimuth = processor.calculateAzimuth();
-                        if(config.getIsDebug())
-                            std::cout << "Azimuth Calculated" << std::endl;
+                     if(config.getIsDebug())
+                          std::cout << "Azimuth Calculated" << std::endl;
 
                   double altitude = processor.calculateAltitude();
-                        if(config.getIsDebug())
-                            std::cout << "Altitude Calculated" << std::endl;
+                      if(config.getIsDebug())
+                          std::cout << "Altitude Calculated" << std::endl;
 
 	            if(config.getIsDebug())
 	                std::cout << "Image Processed by TargetProcessor" << std::endl;
@@ -229,26 +229,25 @@ int main(int argc, char* argv[])
 			//for background
 	                imshow("General", background);
 
-	            if (config.getIsNetworking())
+            if (config.getIsNetworking())
 				    {
+			          msg.append("true;" +
+			          boost::lexical_cast<std::string> (distance) + ";" +
+      					boost::lexical_cast<std::string> (azimuth) + ";" +
+		      			boost::lexical_cast<std::string> (altitude) + ";");
+					  }
 
-			            msg.append("true;" +
-			            boost::lexical_cast<std::string> (distance) + ";" +
-						boost::lexical_cast<std::string> (azimuth) + ";" +
-						boost::lexical_cast<std::string> (altitude) + ";");
-					}
-
-				if(config.getIsDebug()){
-	            	std::cout << "Target Found! Distance (Gears): " << distance;
-	                std::cout << "Altitude (Gears): " << altitude << std::endl;
-	                std::cout << "Azimuth (Gears): " << azimuth << std::endl;
-	            }
-			//information to send (Networking)
+    				if(config.getIsDebug()){
+              	std::cout << "Target Found! Distance (Gears): " << distance;
+	              std::cout << "Altitude (Gears): " << altitude << std::endl;
+	              std::cout << "Azimuth (Gears): " << azimuth << std::endl;
+	          }
+			    //information to send (Networking)
 	        }
 	        else
 	        {
-	            if (config.getIsNetworking())
-	                msg.append("false;");
+	          if (config.getIsNetworking())
+	              msg.append("false;");
 	        }
 
 			if(config.getIsNetworking())
@@ -257,13 +256,10 @@ int main(int argc, char* argv[])
 			}
 
 	        imshow("Live Video Feed", image);
-
-
 	        loop++;
 	        delete targetG;
-		delete targetB;
+      		delete targetB;
 	    //refresh loop
     }
-
     return 0;
 }
