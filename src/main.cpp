@@ -68,18 +68,38 @@ int main(int argc, char* argv[])
 	            std::cout << "Image Processed by Target Detector" << std::endl;
 
 	        bool foundGear = false;
+					bool foundBoiler = false;
 
-	        if ((*targetG).m_contour.size() != 0)
+	        /* if ((*targetG).edgeL.size() != 0)
 	        {
 	            foundGear = true;
-	        }
+	        } */
+					bool typeG = targetG.getType();
+					bool typeB = targetB.getType();
 
-		bool foundBoiler = false;
-	    
-	        if ((*targetB).m_contour.size() != 0)
+					if (typeG==true)
+					{
+							foundGear = true;
+					}
+					if (typeG==false)
+					{
+							foundGear = false;
+					}
+					if (typeB==true)
+					{
+							foundBoiler = true;
+					}
+					if (typeG==false)
+					{
+							foundBoiler = false;
+					}
+
+
+
+	        /*if ((*targetB).contours.size() != 0)
 	        {
 	            foundBoiler = true;
-	        }
+	        }*/
 
 			std::cout <<"About to check the value of foundTarget" << std::endl;
 
@@ -95,15 +115,15 @@ int main(int argc, char* argv[])
 				if(config.getIsDebug())
 				    std::cout << "Target Loaded" << std::endl;
 
-				double distance = processor.calcDistance();
+				double distance = processor.calculateDistance();
 				if(config.getIsDebug())
 					std::cout << "Distance Calculated" << std::endl;
 
-				double azimuth = processor.calcAzimuth();
+				double azimuth = processor.calculateAzimuth();
 				if(config.getIsDebug())
 					std::cout << "Azimuth Calculated" << std::endl;
 
-				double altitude = processor.calcAltitude();
+				double altitude = processor.calculateAltitude();
 				if(config.getIsDebug())
 					std::cout << "Altitude Calculated" << std::endl;
 
@@ -160,7 +180,7 @@ int main(int argc, char* argv[])
 	            if(config.getIsDebug())
 	                std::cout << "Target Loaded" << std::endl;
 
-	            double distance = processor.calcDistance();
+	            double distance = processor.calculateDistance();
 
 	            if(config.getIsDebug())
 	                std::cout << "Distance Calculated" << std::endl;
@@ -168,11 +188,11 @@ int main(int argc, char* argv[])
                   double Height = target.maxY-target.minY;
                   double Width = target.maxX-target.minX;
 
-                  double azimuth = processor.calcAzimuth();
+                  double azimuth = processor.calculateAzimuth();
                         if(config.getIsDebug())
                             std::cout << "Azimuth Calculated" << std::endl;
 
-                  double altitude = processor.calcAltitude);
+                  double altitude = processor.calculateAltitude);
                         if(config.getIsDebug())
                             std::cout << "Altitude Calculated" << std::endl;
 
