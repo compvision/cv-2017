@@ -8,7 +8,9 @@ TargetDetector::TargetDetector() {
 }
 
 Target* TargetDetector::processImage(Mat input, bool tar) {
+    GaussianBlur(input,input,Size(3,3),1,1);
     input = thresholdImage(input, 0, 102, 227, 255);
+    imshow("Thresholded",input);
     dilate(input, input, Mat());
 
     std::vector<std::vector<Point> > contours = contour(input);
@@ -78,7 +80,8 @@ double TargetDetector::angle(cv::Point p1, cv::Point p2, cv::Point p0) {
     return atan(dy1/dx1)-atan(dy2/dx2); //in rad
 }
 
-std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std::vector<Point> > contours, bool tar) {
+std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std::vector<Point> > contours, bool tar)
+{
 //bool tar: true = gears, false = boiler
     for(unsigned int j = 0; j < contours.size(); j++)
     {
@@ -118,16 +121,16 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
               tempVV.push_back (outputContour);
               // TempV is put in twice to the tempVV vector to serve as a placeholder
 
-              Target target(tempVV);
+              Target* target = new Target(tempVV);
               // TempVV is temporary and is used to call getType
               /* if the target called by the main is the same as the one found
                  and if it is gears on first time*/
-              if (tar == target.getType() && tar == true && tarNum == 0) {
+              if (tar == target->getType() && tar == true && tarNum == 0) {
                 outputContour1 = outputContour;
                 tarNum += 1;
               }
               // Gears on second try
-              else if (tar == target.getType() && tar == true && tarNum == 1) {
+              else if (tar == target->getType() && tar == true && tarNum == 1) {
                 outputContour2 = outputContour;
                 tarNum = 0;
                 // whichever has the least has the left most points
@@ -142,7 +145,7 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
                 return fullContour;
               }
               //if boiler was called
-              if (tar = target.getType() && tar == false) {
+              if (tar == target->getType() && tar == false) {
 
                 fullContour.push_back (outputContour);
                 fullContour.push_back (outputContour);

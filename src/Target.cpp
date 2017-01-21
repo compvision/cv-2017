@@ -8,6 +8,7 @@ Target::Target(std::vector<std::vector<cv::Point> > contour)
 {
     edgeL = contour[0];
     edgeR = contour[1];
+
     //splits the inputted vector into two shapes again
 }
 
@@ -60,6 +61,8 @@ void Target::printPoints() //debugging
     std::cout << "BottomPoint: " << getBottomPoint() << std::endl;
     std::cout << "LeftPoint: " << getLeftPoint() << std::endl;
     std::cout << "RightPoint: " << getRightPoint() << std::endl;
+    std::cout << "Height: " << getHeight() << std::endl;
+    std::cout << "Width: "  << getWidth() << std::endl;
 }
 
 cv::Point Target::getCenter()//finds center point of target
