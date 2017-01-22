@@ -9,8 +9,9 @@ TargetDetector::TargetDetector() {
 
 Target* TargetDetector::processImage(Mat input, bool tar) {
     GaussianBlur(input,input,Size(3,3),1,1);
-    input = canny(thresholdImage(input,53,58,0,255,228,238));
+    input = thresholdImage(input,53,58,0,255,228,238);
     imshow("Thresholded",input);
+    input = canny(input);
     dilate(input, input, Mat());
 
     std::vector<std::vector<Point> > contours = contour(input);

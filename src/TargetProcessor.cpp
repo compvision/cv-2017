@@ -4,34 +4,41 @@
 
 TargetProcessor::TargetProcessor()
 {
-    GearWidth = 0.508; //meters
-    BoilerWidth = 0.508;
-    focalLength = 415.74; //varies by camera
+    GearWidth = 0.270; //meters
+    BoilerWidth = 0.381;
+    focalLength = 700; //varies by camera
     horizCenter = 210.2315; //aslo varies by camera (center horizontal point on video)
     vertCenter = 207.87; //center vertical point on video
 
 } //constructor
 
-/*void TargetProcessor::loadTarget(Target* target){
+void TargetProcessor::loadTarget(Target* target){
     imageTarWidth = target->getWidth();
     imageTarHeight = target->getHeight();
     imageTarCenter = target->getCenter();
     Tar = target->getTar();
-}*/
+}
 
 
-void TargetProcessor::temporaryGetPoints(int width, int height, cv::Point center){
+void TargetProcessor::temporaryGetPoints(int width, int height, cv::Point center)
+{
     imageTarWidth = width;
     imageTarHeight = height;
     imageTarCenter = center;
     Tar = true;
 }
 
-double TargetProcessor::calculateDistance(){
-    if(Tar){
-        return BoilerWidth * focalLength / imageTarWidth; //returns the distance (m)
-    }else{
-        return GearWidth * focalLength / imageTarWidth;
+double TargetProcessor::calculateDistance()
+{
+    if(Tar)
+    {
+        std::cout << "gear image width: " << imageTarWidth << std::endl;
+        return GearWidth * focalLength / imageTarWidth; //returns the distance (m)
+    }
+    else
+    {
+        std::cout << "boiler image width: " << imageTarWidth << std::endl;
+        return BoilerWidth * focalLength / imageTarWidth;
     }
 }
 
