@@ -193,17 +193,20 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
               // Gears on second try
               if (tar == target->getType() && tar == true && tarNum == 1) {
                 outputContour2 = outputContour;
-                tarNum = 0;
+                if (outputContour1[1].x != outputContour2[1].x)
+                {
+                  tarNum = 0;
                 // whichever has the least has the left most points
-                if (outputContour1[1].x > outputContour2[1].x) {
-                  fullContour.push_back (outputContour2); // first will be left, then right
-                  fullContour.push_back (outputContour1);
-                } else {
-                  fullContour.push_back (outputContour1);
-                  fullContour.push_back (outputContour2);
-                }
+                  if (outputContour1[1].x > outputContour2[1].x) {
+                    fullContour.push_back (outputContour2); // first will be left, then right
+                    fullContour.push_back (outputContour1);
+                  } else {
+                    fullContour.push_back (outputContour1);
+                    fullContour.push_back (outputContour2);
+                  }
 
                 return fullContour;
+                }
               }
               //if boiler was called
               if (tar == target->getType() && tar == false) {
