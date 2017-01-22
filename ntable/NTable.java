@@ -24,10 +24,10 @@ class NTable
             //inFromServer = client.getInputStream();
             //in = new DataInputStream(inFromServer);
 
-            /*NetworkTable.setClientMode();
-            NetworkTable.setIPAddress("70.95.180.209");
+            NetworkTable.setClientMode();
+            NetworkTable.setIPAddress("roboRIO-3341-FRC.local");
             NetworkTable table = NetworkTable.getTable("cv");
-            *///Main loop
+            //Main loop
             while(true)
             {
                 //send the value request
@@ -38,10 +38,10 @@ class NTable
                 String targetDataRaw = null;
                 targetDataRaw = in.readLine();
 
-                /*if(targetDataRaw == null)
+                if(targetDataRaw == null)
                     break;
                 if(targetDataRaw.isEmpty())
-                    continue;*/
+                    continue;
 
                 // Implements the FRC 2015 Network Tables Protocol
                 boolean Gear, Boiler;
@@ -60,14 +60,15 @@ class NTable
                     System.out.println("Azimuth: " + gearAzimuth); 
 					System.out.println("Altitude: " + gearAltitude); 
                     System.out.println(); 
-                    /*table.putBoolean("Gear", true);
-                    table.putNumber("distance_m", distance);
-                    table.putNumber("azimuth_deg", azimuth);
-					table.putNumber("altitude_deg", altitude);*/
+                    table.putBoolean("Gear", true);
+                    table.putNumber("gearDistance", gearDistance);
+                    table.putNumber("gearAzimuth", gearAzimuth);
+					table.putNumber("gearAltitude", gearAltitude);
                 }
 				else
 				{	
                   	System.out.println("Gear not found");
+					table.putBoolean("gearFound", false);
 				}	
 
 				if(Boiler)
@@ -80,23 +81,24 @@ class NTable
                     System.out.println("Azimuth: " + boilerAzimuth); 
 					System.out.println("Altitude: " + boilerAltitude); 
                     System.out.println(); 
-                    /*table.putBoolean("Boiler", true);
-                    table.putNumber("distance_m", boilerDistance);
-                    table.putNumber("azimuth_deg", boilerAzimuth);
-					table.putNumber("altitude_deg", boilerAltitude);*/
+                    table.putBoolean("Boiler", true);
+                    table.putNumber("boilerDistance", boilerDistance);
+                    table.putNumber("boilerAzimuth", boilerAzimuth);
+					table.putNumber("boilerAltitude", boilerAltitude);
                 }
                 else
                 {                
 					System.out.println("Boiler not found");
+					table.putBoolean("boilerFound", false);
 				}
-					//table.putBoolean("Gear", false);
-					//table.putBoolean("Boiler", false);
+					
+					
                     System.out.println(); 
-                }
-            } 
+       		}
+       } 
            
-			catch(IOException e)
-			{
+		catch(IOException e)
+		{
 				/*try
 				{ // just in case null pointer exception try/catch
 					

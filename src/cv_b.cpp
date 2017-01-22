@@ -27,7 +27,7 @@ int main(/*int argc, char* argv[]*/)
         networkController.waitForPing();
 
         bool foundGear = true; 
-		bool foundBoiler = true;
+		bool foundBoiler = false;
 
 		std::string msg = "";
 		
