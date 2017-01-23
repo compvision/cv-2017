@@ -10,18 +10,27 @@ TargetDetector::TargetDetector() {
 Target* TargetDetector::processImage(Mat input, bool tar) {
     GaussianBlur(input,input,Size(3,3),1,1);
     input = canny(thresholdImage(input,53,58,0,255,228,238));
-    imshow("Thresholded",input);
+
     dilate(input, input, Mat());
 
     std::vector<std::vector<Point> > contours = contour(input);
     // std::cout << "not contours" << std::endl;
     std::vector<std::vector<Point> > finalContour = filterContours(contours, tar);
+
+
+
+
+    imshow("Contours",input);
     // std::cout << "not filterContours" << std::endl;
 
     if (finalContour.size() == 0) {
         return NULL;
     }
     else {
+      /*if (&finalContour[0] != NULL)
+      {
+      cv::drawContours(input, finalContour, -1, Scalar(255,0,0), 5);
+      }*/
         Target* toReturn = new Target(finalContour);
         toReturn -> setTar(tar);
         return toReturn;
@@ -127,10 +136,11 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
 //bool tar: true = gears, false = boiler
   std::vector<Point> arcContour;
   std::vector<Point> outputContour;
+  int tarNum = 0;
     for(int j = 0; j < contours.size(); j++)
     {
 
-      if (tar = false)
+      if (tar == false)
       {
         arcContour = arcCheck1(contours[j]);
         approxPolyDP(arcContour, outputContour, (cv::arcLength(cv::Mat(contours.at(j)), true) * 0.01), true);
@@ -158,7 +168,7 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
             if(maxCosine < .2)
 
             {
-              int tarNum = 0;
+
               std::vector<cv::Point> outputContour1;
               std::vector<cv::Point> outputContour2;
               // Left and Right Outputs
@@ -175,24 +185,28 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
               // TempVV is temporary and is used to call getType
               /* if the target called by the main is the same as the one found
                  and if it is gears on first time*/
+              std::cout << "Type: " << target->getType() << std::endl;
               if (tar == target->getType() && tar == true && tarNum == 0) {
                 outputContour1 = outputContour;
-                tarNum += 1;
+                tarNum = 1;
               }
               // Gears on second try
-              else if (tar == target->getType() && tar == true && tarNum == 1) {
+              if (tar == target->getType() && tar == true && tarNum == 1) {
                 outputContour2 = outputContour;
-                tarNum = 0;
+                if (outputContour1[1].x != outputContour2[1].x)
+                {
+                  tarNum = 0;
                 // whichever has the least has the left most points
-                if (outputContour1[1].x > outputContour2[1].x) {
-                  fullContour.push_back (outputContour2); // first will be left, then right
-                  fullContour.push_back (outputContour1);
-                } else {
-                  fullContour.push_back (outputContour1);
-                  fullContour.push_back (outputContour2);
-                }
+                  if (outputContour1[1].x > outputContour2[1].x) {
+                    fullContour.push_back (outputContour2); // first will be left, then right
+                    fullContour.push_back (outputContour1);
+                  } else {
+                    fullContour.push_back (outputContour1);
+                    fullContour.push_back (outputContour2);
+                  }
 
                 return fullContour;
+                }
               }
               //if boiler was called
               if (tar == target->getType() && tar == false) {
