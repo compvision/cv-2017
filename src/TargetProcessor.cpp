@@ -4,9 +4,9 @@
 
 TargetProcessor::TargetProcessor()
 {
-    GearWidth = 0.508; //meters
-    BoilerWidth = 0.508;
-    focalLength = 415.74; //varies by camera
+    GearWidth = 0.270; //meters
+    BoilerWidth = 0.381;
+    focalLength = 700; //varies by camera
     horizCenter = 210.2315; //aslo varies by camera (center horizontal point on video)
     vertCenter = 207.87; //center vertical point on video
 
@@ -20,27 +20,34 @@ void TargetProcessor::loadTarget(Target* target){
 }
 
 
-void TargetProcessor::temporaryGetPoints(int width, int height, cv::Point center){
+void TargetProcessor::temporaryGetPoints(int width, int height, cv::Point center)
+{
     imageTarWidth = width;
     imageTarHeight = height;
     imageTarCenter = center;
-    Tar = 1;
+    Tar = true;
 }
 
-double TargetProcessor::calculateDistance(){
-    if(Tar){
-        return BoilerWidth * focalLength / imageTarWidth; //returns the distance (m)
-    }else{
-        return GearWidth * focalLength / imageTarWidth;
+double TargetProcessor::calculateDistance()
+{
+    if(Tar)
+    {
+        std::cout << "gear image width: " << imageTarWidth << std::endl;
+        return GearWidth * focalLength / imageTarWidth; //returns the distance (m)
+    }
+    else
+    {
+        std::cout << "boiler image width: " << imageTarWidth << std::endl;
+        return BoilerWidth * focalLength / imageTarWidth;
     }
 }
 
-double TargetProcessor::calculateAzimuth() //unsure if this is working properly, but is returning a reasonable looking value{
+double TargetProcessor::calculateAzimuth(){ //unsure if this is working properly, but is returning a reasonable looking value{
     double offset = imageTarCenter.x - horizCenter;
     return (atan(offset/focalLength))*(180/M_PI); //in degrees
 }
 
-double TargetProcessor::calculateAltitude() //same comment as calculateAzimuth(){
+double TargetProcessor::calculateAltitude(){ //same comment as calculateAzimuth(){
     int cameraAngle = 0; //angle the camera is pointing up from the horizon; assumes camera is level
     double offset =  vertCenter - imageTarCenter.y;
     return (atan(offset/focalLength))*(180/M_PI) + cameraAngle; //in degrees
