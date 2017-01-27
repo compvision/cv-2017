@@ -57,8 +57,6 @@ int main(int argc, char* argv[])
 
 			std::string msg;
 
-
-		#include <iostream>bug())
 	      std::cout << "While Loop #" << loop << std::endl;
 
 				if(config.getIsNetworking())
