@@ -56,15 +56,7 @@ int main(int argc, char* argv[])
 			cv::Mat background(Size(1000,1000), CV_8UC1, Scalar(255, 255, 255 ));
 
 			std::string msg;
-	        if(config.getIsDenamespace patch
-					{
-    		 template < typename T > std::string to_string( const T& n )
-    		 {
-        		std::ostringstream stm ;
-        		stm << n ;
-        		return stm.str() ;
-    		 }
-		}
+
 
 		#include <iostream>bug())
 	      std::cout << "While Loop #" << loop << std::endl;
