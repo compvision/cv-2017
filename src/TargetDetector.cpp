@@ -209,6 +209,7 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
                 //std::cout << "Returning" << std::endl;
                 return fullContour;
                 }
+                
               }
 
               if (tar == target->getType() && tar == true && tarNum == 0) {
