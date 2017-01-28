@@ -86,170 +86,177 @@ int main(int argc, char* argv[])
 	        {
 	            foundGear = true;
 	        } */
-  			bool typeG = targetG -> getType();
-				bool typeB = targetB -> getType();
 
-				if (typeG==true)
-				{
-						foundGear = true;
-				}
-	  		if (typeG==false)
-				{
-						foundGear = false;
-				}
-				if (typeB==true)
-				{
-						foundBoiler = true;
-				}
-				if (typeG==false)
-				{
-						foundBoiler = false;
-				}
-        /*if ((*targetB).contours.size() != 0)
-        {
-            foundBoiler = true;
-        }*/
-	  		std::cout <<"About to check the value of foundTarget" << std::endl;
+        bool typeG;
+        bool typeB;
+        std::cout<<"right"<<std::endl;
+        if (targetG == NULL || targetB == NULL) {
+  		   typeG = targetG -> getType();
+				 typeB = targetB -> getType();
+         std::cout<<"after booleans are delcared"<<std::endl;
 
-		    if(foundBoiler)
-			  {
-				std::cout <<"Boiler was found " << std::endl;
-				if(config.getIsDebug())
-					std::cout << "Image Being Processed" << std::endl;
+  				if (typeG==true)
+  				{
+  						foundGear = true;
+  				}
+  	  		if (typeG==false)
+  				{
+  						foundGear = false;
+  				}
+  				if (typeB==true)
+  				{
+  						foundBoiler = true;
+  				}
+  				if (typeB==false)
+  				{
+  						foundBoiler = false;
+  				}
+          /*if ((*targetB).contours.size() != 0)
+          {
+              foundBoiler = true;
+          }*/
+  	  		std::cout <<"About to check the value of foundTarget" << std::endl;
 
-					processor.loadTarget(targetB);
-					// middle value should be changed to object's real width (diameter of boiler is 15 in.)
+  		    if(foundBoiler)
+  			  {
+  				std::cout <<"Boiler was found " << std::endl;
+  				if(config.getIsDebug())
+  					std::cout << "Image Being Processed" << std::endl;
 
-				if(config.getIsDebug())
-				    std::cout << "Target Loaded" << std::endl;
+  					processor.loadTarget(targetB);
+  					// middle value should be changed to object's real width (diameter of boiler is 15 in.)
 
-				double distance = processor.calculateDistance();
-				if(config.getIsDebug())
-					std::cout << "Distance Calculated" << std::endl;
+  				if(config.getIsDebug())
+  				    std::cout << "Target Loaded" << std::endl;
 
-				double azimuth = processor.calculateAzimuth();
-				if(config.getIsDebug())
-					std::cout << "Azimuth Calculated" << std::endl;
+  				double distance = processor.calculateDistance();
+  				if(config.getIsDebug())
+  					std::cout << "Distance Calculated" << std::endl;
 
-				double altitude = processor.calculateAltitude();
-				if(config.getIsDebug())
-					std::cout << "Altitude Calculated" << std::endl;
+  				double azimuth = processor.calculateAzimuth();
+  				if(config.getIsDebug())
+  					std::cout << "Azimuth Calculated" << std::endl;
 
-				if(config.getIsDebug())
-					std::cout << "Image Processed by TargetProcessor" << std::endl;
+  				double altitude = processor.calculateAltitude();
+  				if(config.getIsDebug())
+  					std::cout << "Altitude Calculated" << std::endl;
 
-				std::string dis = "distance (Boiler): " + patch::to_string(distance);
-				std::string alt = "altitude (Boiler): " + patch::to_string(altitude);
-				std::string azi = "azimuth (Boiler): " + patch::to_string(azimuth);
+  				if(config.getIsDebug())
+  					std::cout << "Image Processed by TargetProcessor" << std::endl;
 
-				cv::putText(background, dis, cv::Point(50,100),
-				cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
+  				std::string dis = "distance (Boiler): " + patch::to_string(distance);
+  				std::string alt = "altitude (Boiler): " + patch::to_string(altitude);
+  				std::string azi = "azimuth (Boiler): " + patch::to_string(azimuth);
 
-				cv::putText(background, alt, cv::Point(50,200),
-				cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
+  				cv::putText(background, dis, cv::Point(50,100),
+  				cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
 
-				cv::putText(background, azi, cv::Point(50,400),
-				cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
-				// for background
-				imshow("General", background);
+  				cv::putText(background, alt, cv::Point(50,200),
+  				cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
 
-		    if (config.getIsNetworking())
-				{
-					msg.append("true;" +
-					boost::lexical_cast<std::string> (distance) + ";" +
-					boost::lexical_cast<std::string> (azimuth) + ";" +
-					boost::lexical_cast<std::string> (altitude) + ";");
-				}
+  				cv::putText(background, azi, cv::Point(50,400),
+  				cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
+  				// for background
+  				imshow("General", background);
 
-				if(config.getIsDebug()){
-					std::cout << "Target Found! Distance (Boiler): " << distance;
-					std::cout << "Altitude (Boiler): " << altitude << std::endl;
-					std::cout << "Azimuth (Boiler): " << azimuth << std::endl;
-				}
+  		    if (config.getIsNetworking())
+  				{
+  					msg.append("true;" +
+  					boost::lexical_cast<std::string> (distance) + ";" +
+  					boost::lexical_cast<std::string> (azimuth) + ";" +
+  					boost::lexical_cast<std::string> (altitude) + ";");
+  				}
 
-			}
-			else
-			{
-				if (config.getIsNetworking())
-					msg.append("false;");
-			}
+  				if(config.getIsDebug()){
+  					std::cout << "Target Found! Distance (Boiler): " << distance;
+  					std::cout << "Altitude (Boiler): " << altitude << std::endl;
+  					std::cout << "Azimuth (Boiler): " << azimuth << std::endl;
+  				}
 
-	        if(foundGear)
-	        {
-             std::cout <<"Gear was found " << std::endl;
-             if(config.getIsDebug())
-             std::cout << "Image Being Processed" << std::endl;
-             processor.loadTarget(targetG);
-      			// middle value should be changed to the object's real width (The width of the Gear "rectangle is 10.25 in.)
+  			}
+  			else
+  			{
+  				if (config.getIsNetworking())
+  					msg.append("false;");
+  			}
 
-	          if(config.getIsDebug())
-	            std::cout << "Target Loaded" << std::endl;
+  	        if(foundGear)
+  	        {
+               std::cout <<"Gear was found " << std::endl;
+               if(config.getIsDebug())
+               std::cout << "Image Being Processed" << std::endl;
+               processor.loadTarget(targetG);
+        			// middle value should be changed to the object's real width (The width of the Gear "rectangle is 10.25 in.)
 
-	          double distance = processor.calculateDistance();
+  	          if(config.getIsDebug())
+  	            std::cout << "Target Loaded" << std::endl;
 
-	          if(config.getIsDebug())
-	                std::cout << "Distance Calculated" << std::endl;
+  	          double distance = processor.calculateDistance();
 
-                  double azimuth = processor.calculateAzimuth();
-                     if(config.getIsDebug())
-                          std::cout << "Azimuth Calculated" << std::endl;
+  	          if(config.getIsDebug())
+  	                std::cout << "Distance Calculated" << std::endl;
 
-                  double altitude = processor.calculateAltitude();
-                      if(config.getIsDebug())
-                          std::cout << "Altitude Calculated" << std::endl;
+                    double azimuth = processor.calculateAzimuth();
+                       if(config.getIsDebug())
+                            std::cout << "Azimuth Calculated" << std::endl;
 
-	            if(config.getIsDebug())
-	                std::cout << "Image Processed by TargetProcessor" << std::endl;
+                    double altitude = processor.calculateAltitude();
+                        if(config.getIsDebug())
+                            std::cout << "Altitude Calculated" << std::endl;
 
-	                std::string dis = "distance (Gear): " + patch::to_string(distance);
-	                std::string alt = "altitude (Gear): " + patch::to_string(altitude);
-	                std::string azi = "azimuth (Gear): " + patch::to_string(azimuth);
+  	            if(config.getIsDebug())
+  	                std::cout << "Image Processed by TargetProcessor" << std::endl;
 
-	                cv::putText(background, dis, cv::Point(50,100),
-	                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
-	                1);
+  	                std::string dis = "distance (Gear): " + patch::to_string(distance);
+  	                std::string alt = "altitude (Gear): " + patch::to_string(altitude);
+  	                std::string azi = "azimuth (Gear): " + patch::to_string(azimuth);
 
-	                cv::putText(background, alt, cv::Point(50,200),
-	                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
-	                1);
+  	                cv::putText(background, dis, cv::Point(50,100),
+  	                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
+  	                1);
 
-	                cv::putText(background, azi, cv::Point(50,400),
-	                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
-	                1);
-			//for background
-	                imshow("General", background);
+  	                cv::putText(background, alt, cv::Point(50,200),
+  	                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
+  	                1);
 
-            if (config.getIsNetworking())
-				    {
-			          msg.append("true;" +
-			          boost::lexical_cast<std::string> (distance) + ";" +
-      					boost::lexical_cast<std::string> (azimuth) + ";" +
-		      			boost::lexical_cast<std::string> (altitude) + ";");
-					  }
+  	                cv::putText(background, azi, cv::Point(50,400),
+  	                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
+  	                1);
+  			//for background
+  	                imshow("General", background);
 
-    				if(config.getIsDebug()){
-              	std::cout << "Target Found! Distance (Gears): " << distance;
-	              std::cout << "Altitude (Gears): " << altitude << std::endl;
-	              std::cout << "Azimuth (Gears): " << azimuth << std::endl;
-	          }
-			    //information to send (Networking)
-	        }
-	        else
-	        {
-	          if (config.getIsNetworking())
-	              msg.append("false;");
-	        }
+              if (config.getIsNetworking())
+  				    {
+  			          msg.append("true;" +
+  			          boost::lexical_cast<std::string> (distance) + ";" +
+        					boost::lexical_cast<std::string> (azimuth) + ";" +
+  		      			boost::lexical_cast<std::string> (altitude) + ";");
+  					  }
 
-			if(config.getIsNetworking())
-			{
-				networkController.sendMessage(msg);
-			}
+      				if(config.getIsDebug()){
+                	std::cout << "Target Found! Distance (Gears): " << distance;
+  	              std::cout << "Altitude (Gears): " << altitude << std::endl;
+  	              std::cout << "Azimuth (Gears): " << azimuth << std::endl;
+  	          }
+  			    //information to send (Networking)
+  	        }
+  	        else
+  	        {
+  	          if (config.getIsNetworking())
+  	              msg.append("false;");
+  	        }
 
-	        imshow("Live Video Feed", image);
-	        loop++;
-	        delete targetG;
-      		delete targetB;
+  			if(config.getIsNetworking())
+  			{
+  				networkController.sendMessage(msg);
+  			}
+
+  	        imshow("Live Video Feed", image);
+  	        loop++;
+  	        delete targetG;
+        		delete targetB;
 	    //refresh loop
+      }
     }
     return 0;
 }
