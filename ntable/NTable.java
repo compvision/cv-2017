@@ -60,7 +60,7 @@ class NTable
                     System.out.println("Azimuth: " + gearAzimuth); 
 					System.out.println("Altitude: " + gearAltitude); 
                     System.out.println(); 
-                    table.putBoolean("Gear", true);
+                    table.putBoolean("gearFound", true);
                     table.putNumber("gearDistance", gearDistance);
                     table.putNumber("gearAzimuth", gearAzimuth);
 					table.putNumber("gearAltitude", gearAltitude);
@@ -81,7 +81,7 @@ class NTable
                     System.out.println("Azimuth: " + boilerAzimuth); 
 					System.out.println("Altitude: " + boilerAltitude); 
                     System.out.println(); 
-                    table.putBoolean("Boiler", true);
+                    table.putBoolean("boilerFound", true);
                     table.putNumber("boilerDistance", boilerDistance);
                     table.putNumber("boilerAzimuth", boilerAzimuth);
 					table.putNumber("boilerAltitude", boilerAltitude);
