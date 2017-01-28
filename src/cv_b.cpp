@@ -6,16 +6,16 @@
 int main(/*int argc, char* argv[]*/)
 {
     // Create all the necessary objects (calls the default constructor for each)
-	std::cout << "test" << std::endl;
+	std::cout << "start code" << std::endl;
     NetworkController networkController;
 	//CmdLineInterface interface(argc, argv);		
 	//AppConfig config = interface.getConfig();
 	//GUIManager gui;
-	std::cout << "test2" << std::endl;
+	std::cout << "initialized network" << std::endl;
     //init networking
     //if(config.getIsNetworking())
     networkController.startServer();
-	std::cout << "test3" << std::endl;
+	std::cout << "started server" << std::endl;
     //if(!config.getIsHeadless())
      //   gui.init();
     //if(config.getIsDebug())
@@ -23,7 +23,7 @@ int main(/*int argc, char* argv[]*/)
 
     while(true)
     {
-		std::cout << "Im here2";
+		//std::cout << "Entered Loop";
         networkController.waitForPing();
 
         bool foundGear = true; 
@@ -33,13 +33,13 @@ int main(/*int argc, char* argv[]*/)
 		
 		std::string gear, boiler;
 		
-		double distance = 10.0;
-		double azimuth = 3.46;
-		double altitude = 2.34;
+		double gearDistance = 452345;
+		double gearAzimuth = 3.46;
+		double gearAltitude = 2.34;
 
-		double bdistance = 7.46;
-		double bazimuth  = 5.42;
-		double baltitude = 1.36;
+		double boilerDistance = 7.7846;
+		double boilerAzimuth  = 5.42;
+		double boilerAtitude = 666;
 
 		//gear value logic
 		if(foundGear)
@@ -61,7 +61,7 @@ int main(/*int argc, char* argv[]*/)
 			boiler = "false;";
 		}
 
-		msg.append(gear + boiler + boost::lexical_cast<std::string> (distance) + ";" + boost::lexical_cast<std::string> (azimuth) + ";" + boost::lexical_cast<std::string> (altitude) + ";" + boost::lexical_cast<std::string> (bdistance) + ";" + boost::lexical_cast<std::string> (bazimuth) + ";" + boost::lexical_cast<std::string> (baltitude) + ";");
+		msg.append(gear + boiler + boost::lexical_cast<std::string> (gearDistance) + ";" + boost::lexical_cast<std::string> (gearAzimuth) + ";" + boost::lexical_cast<std::string> (gearAltitude) + ";" + boost::lexical_cast<std::string> (boilerDistance) + ";" + boost::lexical_cast<std::string> (boilerAzimuth) + ";" + boost::lexical_cast<std::string> (boilerAtitude) + ";");
 
 		//std::cout << msg << std::endl;
         if(foundGear || foundBoiler)
@@ -71,16 +71,16 @@ int main(/*int argc, char* argv[]*/)
 			//determines whether or not to send the distance of the boiler or gear            
 			if(foundGear)
 			{    
-            	std::cout << "Gear Found! Distance: " << distance;
+            	std::cout << "Gear Found! Distance: " << gearDistance << std::endl;
 			}
 			else if (foundBoiler)
 			{
-				std::cout << "Boiler Found! Distance: " << bdistance;
+				std::cout << "Boiler Found! Distance: " << boilerDistance << std::endl;
 			}
         }
         else
         {
-            networkController.sendMessage("false;");
+            networkController.sendMessage("false;false;");
         }
     }
 
