@@ -90,10 +90,16 @@ int main(int argc, char* argv[])
         bool typeG;
         bool typeB;
         std::cout<<"right"<<std::endl;
-        if (targetG == NULL || targetB == NULL) {
-  		   typeG = targetG -> getType();
-				 typeB = targetB -> getType();
-         std::cout<<"after booleans are delcared"<<std::endl;
+        if (targetG != NULL || targetB != NULL) {
+         std::cout<<"in if"<<std::endl;
+
+         if(targetG != NULL)
+         typeG = targetG -> getType();
+
+        if(targetB != NULL)
+         typeB = targetB -> getType();
+
+
 
   				if (typeG==true)
   				{
