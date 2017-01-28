@@ -39,7 +39,7 @@ bool Target::getType() {
   if (getHeight() > getWidth()) {
     return true;
   }
-  if (getHeight() < getWidth()) {
+if (getHeight() < getWidth()) {
     return false;
   }
 }
@@ -57,10 +57,12 @@ bool Target::isInitialized()
 
 void Target::printPoints() //debugging
 {
-    std::cout << "TopPoint: " << getTopPoint() << std::endl;
-    std::cout << "BottomPoint: " << getBottomPoint() << std::endl;
-    std::cout << "LeftPoint: " << getLeftPoint() << std::endl;
-    std::cout << "RightPoint: " << getRightPoint() << std::endl;
+    std::cout << "TopPoint: " << getTopPoint().y << std::endl;
+    std::cout << "BottomPoint: " << getBottomPoint().y << std::endl;
+    std::cout << "LeftPoint: " << getLeftPoint().x << std::endl;
+    std::cout << "RightPoint: " << getRightPoint().x << std::endl;
+    std::cout << "LeftRightPoint: " << getLeftRightPoint().x << std::endl;
+    std::cout << "RightLeftPoint: " << getLeftRightPoint().x << std::endl;
     std::cout << "Height: " << getHeight() << std::endl;
     std::cout << "Width: "  << getWidth() << std::endl;
 }
@@ -73,7 +75,7 @@ cv::Point Target::getCenter()//finds center point of target
 
 cv::Point Target::getTopPoint()
 {
-    cv::Point max(0,0);
+    cv::Point max =  edgeL[0];
     for(unsigned int i = 0; i < edgeL.size(); i++)
     {
         if(edgeL[i].y > max.y)
@@ -85,7 +87,7 @@ cv::Point Target::getTopPoint()
 }
 cv::Point Target::getBottomPoint()
 {
-    cv::Point min(10000,10000);
+    cv::Point min =  edgeL[0];
     for(unsigned int i = 0; i < edgeL.size(); i++)
     {
         if(edgeL[i].y < min.y)
@@ -97,10 +99,10 @@ cv::Point Target::getBottomPoint()
 }
 cv::Point Target::getLeftPoint()
 {
-    cv::Point min(0,0);
+    cv::Point min =  edgeL[0];
     for(unsigned int i = 0; i < edgeL.size(); i++)
     {
-        if(edgeL[i].x > min.x)
+        if(edgeL[i].x < min.x)
         {
             min = edgeL[i];
         }
@@ -108,15 +110,43 @@ cv::Point Target::getLeftPoint()
     return min;
 }
 // Uses the right shape for right most point in order to pretend like it's one big shape
-cv:: Point Target::getRightPoint()
+cv::Point Target::getRightPoint()
 {
-    cv::Point max(10000,10000);
+    cv::Point max = edgeR[0];
     for(unsigned int i = 0; i < edgeR.size(); i++)
     {
-        if(edgeR[i].x < max.x)
+        if(edgeR[i].x > max.x)
         {
             max = edgeR[i];
         }
     }
     return max;
+}
+
+//Right-most point of left shape
+cv::Point Target::getLeftRightPoint()
+{
+  cv::Point max = edgeL[0];
+  for(unsigned int i = 0; i < edgeL.size(); i++)
+  {
+      if(edgeL[i].x > max.x)
+      {
+          max = edgeL[i];
+      }
+  }
+  return max;
+}
+
+//Left-most point of right shape
+cv::Point Target::getRightLeftPoint()
+{
+  cv::Point min = edgeR[0];
+  for(unsigned int i = 0; i < edgeR.size(); i++)
+  {
+      if(edgeR[i].x < min.x)
+      {
+          min = edgeR[i];
+      }
+  }
+  return min;
 }
