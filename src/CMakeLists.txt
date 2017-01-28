@@ -12,13 +12,11 @@ target_link_libraries(cv_a2 ${OpenCV_LIBS})
 #target_link_libraries(cv_b ${OpenCV_LIBS} ${Boost_LIBRARIES})
 
 
-add_executable(cv-2017 main.cpp Target.cpp TargetDetector.cpp TargetProcessor.cpp NetworkController.cpp VideoDevice.cpp GUIManager.cpp CmdLineInterface.cpp AppConfig.cpp)
-target_link_libraries(cv-2017 ${OpenCV_LIBS} ${Boost_LIBRARIES})
+#add_executable(cv-2017 main.cpp Target.cpp TargetDetector.cpp TargetProcessor.cpp NetworkController.cpp VideoDevice.cpp GUIManager.cpp CmdLineInterface.cpp AppConfig.cpp)
+#target_link_libraries(cv-2017 ${OpenCV_LIBS} ${Boost_LIBRARIES})
 
 #add_executable(cv-2017 main.cpp Target.cpp TargetDetector.cpp TargetProcessor.cpp NetworkController.cpp VideoDevice.cpp GUIManager.cpp CmdLineInterface.cpp AppConfig.cpp)
 #target_link_libraries(cv-2017 ${OpenCV_LIBS} ${Boost_LIBRARIES})
 
 #add_executable(stupid stupid.cpp TargetDetector.cpp)
 #target_link_libraries(stupid ${OpenCV_LIBS})
-
-

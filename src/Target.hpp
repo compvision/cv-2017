@@ -14,13 +14,15 @@ public:
     void setTar(bool tar);
     bool getType();
     bool getTar();
-    //bool isInitialized();
-    //int crow;
-private:
     Point getTopPoint();
     Point getBottomPoint();
     Point getLeftPoint();
     Point getRightPoint();
+    //bool isInitialized();
+    //int crow;
+private:
+    Point getLeftRightPoint();
+    Point getRightLeftPoint();
     std::vector<Point> edgeL;
     std::vector<Point> edgeR;
     bool Tar;

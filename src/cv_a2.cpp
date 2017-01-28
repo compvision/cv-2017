@@ -17,7 +17,8 @@ int main(){
     cap -> startCapture(1);
 
     cv::Mat rawImg;
-    for(;;)
+
+    while(cv::waitKey(30) != 27)
     {
 
         rawImg = cap -> getImage();
@@ -28,6 +29,7 @@ int main(){
         if(t != NULL)
         {
           processor->loadTarget(t);
+          t->printPoints();
 
           double distance = processor->calculateDistance();
           double azimuth = processor->calculateAzimuth();
@@ -46,10 +48,10 @@ int main(){
           cout << altText << endl;
 
         }
-        if(waitKey(30) >= 0)
-            break;
+
     }
     delete processor;
     delete detector;
+    waitKey(0);
     return 0;
 }
