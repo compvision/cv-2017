@@ -8,17 +8,24 @@ class NTable
     {
         String serverName = "localhost";
         int port = 3341; 
-        try
+		Socket client = new Socket(serverName, port);
+        OutputStream outToServer = client.getOutputStream();
+           
+		DataOutputStream out = new DataOutputStream(outToServer);	
+    	InputStream inFromServer = client.getInputStream();
+		DataInputStream in = new DataInputStream(inFromServer);
+	
+		try
         {
-            Socket client = new Socket(serverName, port);
-            OutputStream outToServer = client.getOutputStream();
-            DataOutputStream out = new DataOutputStream(outToServer);
+            //client = new Socket(serverName, port);
+            //outToServer = client.getOutputStream();
+            //out = new DataOutputStream(outToServer);
 
-            InputStream inFromServer = client.getInputStream();
-            DataInputStream in = new DataInputStream(inFromServer);
+            //inFromServer = client.getInputStream();
+            //in = new DataInputStream(inFromServer);
 
             NetworkTable.setClientMode();
-            NetworkTable.setIPAddress("70.95.180.209");
+            NetworkTable.setIPAddress("roboRIO-3341-FRC.local");
             NetworkTable table = NetworkTable.getTable("cv");
             //Main loop
             while(true)
@@ -30,65 +37,83 @@ class NTable
                 Thread.sleep(100); // Update values every 100 ms
                 String targetDataRaw = null;
                 targetDataRaw = in.readLine();
-                /*if(targetDataRaw == null)
+
+                if(targetDataRaw == null)
                     break;
                 if(targetDataRaw.isEmpty())
                     continue;
-				*/
+
                 // Implements the FRC 2015 Network Tables Protocol
                 boolean Gear, Boiler;
-                double distance = 0, azimuth = 0, altitude = 0, bdistance = 0, bazimuth = 0, baltitude = 0;
+                double gearDistance = 0, gearAzimuth = 0, gearAltitude = 0, boilerDistance = 0, boilerAzimuth = 0, boilerAltitude = 0;
                 String[] parsed = targetDataRaw.split(";"); 
                 Gear = parsed[0].equals("true");
-				Boiler =  = parsed[1].equals("true");
+				Boiler = parsed[1].equals("true");
                 //System.out.println(parsed[0]); 
                 if(Gear)
                 {
-                    distance = Double.parseDouble(parsed[2]);
-                    azimuth = Double.parseDouble(parsed[3]);
-					altitude = Double.parseDouble(parsed[4]);
+                    gearDistance = Double.parseDouble(parsed[2]);
+                    gearAzimuth = Double.parseDouble(parsed[3]);
+					gearAltitude = Double.parseDouble(parsed[4]);
                     System.out.println("Gear found!");
-                    System.out.println("Distance: " + distance);
-                    System.out.println("Azimuth: " + azimuth); 
-					System.out.println("Altitude: " + altitude); 
+                    System.out.println("Distance: " + gearDistance);
+                    System.out.println("Azimuth: " + gearAzimuth); 
+					System.out.println("Altitude: " + gearAltitude); 
                     System.out.println(); 
-                    table.putBoolean("Gear", true);
-                    table.putNumber("distance_m", distance);
-                    table.putNumber("azimuth_deg", azimuth);
-					table.putNumber("altitude_deg", altitude);
+                    table.putBoolean("gearFound", true);
+                    table.putNumber("gearDistance", gearDistance);
+                    table.putNumber("gearAzimuth", gearAzimuth);
+					table.putNumber("gearAltitude", gearAltitude);
                 }
+				else
+				{	
+                  	System.out.println("Gear not found");
+					table.putBoolean("gearFound", false);
+				}	
 
 				if(Boiler)
                 {
-                    distance = Double.parseDouble(parsed[5]);
-                    azimuth = Double.parseDouble(parsed[6]);
-					altitude = Double.parseDouble(parsed[7]);
+                    boilerDistance = Double.parseDouble(parsed[5]);
+                    boilerAzimuth = Double.parseDouble(parsed[6]);
+					boilerAltitude = Double.parseDouble(parsed[7]);
                     System.out.println("Boiler found!");
-                    System.out.println("Distance: " + bdistance);
-                    System.out.println("Azimuth: " + bazimuth); 
-					System.out.println("Altitude: " + baltitude); 
+                    System.out.println("Distance: " + boilerDistance);
+                    System.out.println("Azimuth: " + boilerAzimuth); 
+					System.out.println("Altitude: " + boilerAltitude); 
                     System.out.println(); 
-                    table.putBoolean("Boiler", true);
-                    table.putNumber("distance_m", bdistance);
-                    table.putNumber("azimuth_deg", bazimuth);
-					table.putNumber("altitude_deg", baltitude);
+                    table.putBoolean("boilerFound", true);
+                    table.putNumber("boilerDistance", boilerDistance);
+                    table.putNumber("boilerAzimuth", boilerAzimuth);
+					table.putNumber("boilerAltitude", boilerAltitude);
                 }
                 else
-                {
-                    //System.out.println("Tote not found");
-                    table.putBoolean("Gear", false);
-					table.putBoolean("Boiler", false);
+                {                
+					System.out.println("Boiler not found");
+					table.putBoolean("boilerFound", false);
+				}
+					
+					
                     System.out.println(); 
-                }
-            } 
-            out.close();
-            in.close();
-            client.close();
-        }
-        catch(IOException e)
-        {
+       		}
+       } 
+           
+		catch(IOException e)
+		{
+				/*try
+				{ // just in case null pointer exception try/catch
+					
+				}
+				catch(Exception f)
+				{
+					f.printStackTrace();			
+				}*/
             e.printStackTrace();
         }
-   }    
-    
+		finally
+		{
+			out.close();
+           	in.close();
+           	client.close();
+		}
+	}    
 }
