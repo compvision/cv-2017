@@ -14,7 +14,7 @@ int main(){
     TargetDetector* detector = new TargetDetector();
 
     VideoDevice* cap = new VideoDevice();
-    cap -> startCapture(1);
+    cap -> startCapture(2);
 
     cv::Mat rawImg;
 

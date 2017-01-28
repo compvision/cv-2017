@@ -15,7 +15,7 @@ Target* TargetDetector::processImage(Mat input, bool tar) {
 
     std::vector<std::vector<Point> > contours = contour(input);
     // std::cout << "not contours" << std::endl;
-    std::vector<std::vector<Point> > finalContour = filterContours(contours, tar);
+    std::vector<std::vector<Point> >* finalContour = &filterContours(contours, tar);
 
 
 
@@ -137,8 +137,9 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
   std::vector<Point> outputContour;
   std::vector<cv::Point> outputContour1;
   std::vector<cv::Point> outputContour2;
-  std::vector<std::vector<cv::Point> > tempVV;
+
   int tarNum = 0;
+  Target* first;
     for(int j = 0; j < contours.size(); j++)
     {
 
@@ -152,7 +153,8 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
       }
 
 
-        if (contourArea(outputContour) > 100 && outputContour.size() == 4) {
+        if (contourArea(outputContour) > 100 && outputContour.size() == 4)
+        {
             double maxCosine = 0;
             for(int j = 2; j <=4; j++)
             {
@@ -171,30 +173,38 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
             {
 
 
-
-              tempVV.push_back (outputContour);
-              tempVV.push_back (outputContour);
+              std::vector<std::vector<cv::Point> >* tempVV;
+              tempVV->push_back(outputContour);
+              tempVV->push_back(outputContour);
               // TempV is put in twice to the tempVV vector to serve as a placeholder
 
               Target* target = new Target(tempVV);
               // TempVV is temporary and is used to call getType
-              Target* first;
-              if (tar == target->getType() && tar == true && tarNum == 0) {
 
-                first = new Target(tempVV);
-
-              }
               /* if the target called by the main is the same as the one found
                  and if it is gears on first time*/
               //std::cout << "Type: " << target->getType() << std::endl;
               if (tar == target->getType() && tar == true && tarNum == 1) {
 
                 outputContour2 = outputContour;
-                //std::cout << "Found Candidate for 2" << std::endl;
+                std::cout << "Found Candidate for 2" << std::endl;
                 //Gives a range of error of 6 so that it doesn't detect the same contour twice
-                //((first->getRightPoint().x - 40 > target->getRightPoint().x) || (first->getLeftPoint().x + 40 < target->getLeftPoint().x))
-                if ((( outputContour1[0].x > outputContour2[0].x + 3) || ( outputContour1[0].x < outputContour2[0].x - 3)) && (&outputContour1[0] != NULL || &outputContour2[1] != NULL))
+                //(( outputContour1[0].x > outputContour2[0].x + 3) || ( outputContour1[0].x < outputContour2[0].x - 3))
+                //
+
+                std::cout << "addresses:" << std::endl;
+                std::cout << first << std::endl;
+                std::cout << target << std::endl;
+
+                std::cout << "First: " << first->getLeftPoint() << std::endl;
+                std::cout << "Second: " << target->getLeftPoint() << std::endl;
+
+                std::cout << std::fabs((first->getLeftPoint().x - target->getRightPoint().x)) << std::endl;
+                std::cout << first->getRightPoint().x - first->getLeftPoint().x << std::endl;
+                if (((first->getRightPoint().x - first->getLeftPoint().x) < std::fabs((first->getLeftPoint().x - target->getRightPoint().x))) && (&outputContour1[0] != NULL || &outputContour2[1] != NULL))
+
                 {
+
                   //std::cout << "Found 2" << std::endl;
                   tarNum = 0;
 
@@ -207,15 +217,18 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
                     fullContour.push_back (outputContour2);
                   }
                 //std::cout << "Returning" << std::endl;
+
                 return fullContour;
                 }
               }
 
               if (tar == target->getType() && tar == true && tarNum == 0) {
                 //std::cout << "Found 1" << std::endl;
+                first = new Target(tempVV);
                 outputContour1 = outputContour;
                 tarNum = 1;
               }
+
               // Gears on second try
 
               //if boiler was called
@@ -227,6 +240,7 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
 
                 return fullContour;
               }
+              delete tempVV;
 
             }
 
