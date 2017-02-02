@@ -10,19 +10,19 @@ using namespace std;
 double Altitude, Azimuth, Distance;
 
 int main(){
+
     TargetProcessor* processor = new TargetProcessor();
     TargetDetector* detector = new TargetDetector();
 
     VideoDevice* cap = new VideoDevice();
-    cap -> startCapture(2);
+    //int dev = atoi(argv[1]);
+    cap -> startCapture(1);
 
     cv::Mat rawImg;
 
     while(cv::waitKey(30) != 27)
     {
-
         rawImg = cap -> getImage();
-
         Target* t = detector->processImage(rawImg, true);
         cv::imshow("Data", rawImg);
 
@@ -46,6 +46,7 @@ int main(){
           cout << disText << endl;
           cout << aziText << endl;
           cout << altText << endl;
+          cout << std::endl;
 
         }
 
