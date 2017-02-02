@@ -175,8 +175,13 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
               std::vector<std::vector<Point> > fullContour;
               std::vector<std::vector<Point> >* vPtr;
               vPtr = &tempVV;
+              if (tempVV.size() == 0) {
               tempVV.push_back(outputContour);
               tempVV.push_back(outputContour);
+            } else {
+              tempVV[0] = outputContour;
+              tempVV[1] = outputContour;
+            }
               // TempV is put in twice to the tempVV vector to serve as a placeholder
               Target* target = new Target(tempVV);
               // TempVV is temporary and is used to call getType
@@ -211,6 +216,7 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
                   tarNum = 0;
 
                 // whichever has the least has the left most points
+                if (fullContour.size() == 0) {
                   if (outputContour1[1].x > outputContour2[1].x) {
                     fullContour.push_back (outputContour2); // first will be left, then right
                     fullContour.push_back (outputContour1);
@@ -218,11 +224,19 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
                     fullContour.push_back (outputContour1);
                     fullContour.push_back (outputContour2);
                   }
+                } else {
+                  if (outputContour1[1].x > outputContour2[1].x) {
+                    fullContour[0] = outputContour2; // first will be left, then right
+                    fullContour[1] = outputContour1;
+                  } else {
+                    fullContour[0] = outputContour1;
+                    fullContour[1] = outputContour2;
+                  }
+                }
                 //std::cout << "Returning" << std::endl;
                 std::vector<std::vector<Point> >* fuPtr;
                 fuPtr = &fullContour;
                 return fullContour;
-                delete fuPtr;
                 }
 
               }
@@ -238,22 +252,27 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
 
               //if boiler was called
               if (tar == target->getType() && tar == false) {
-
+                if (fullContour.size() == 0){
                 fullContour.push_back (outputContour);
                 fullContour.push_back (outputContour);
+              } else {
+                fullContour[0] = outputContour;
+                fullContour[1] = outputContour;
+              }
                 // Both contours are the same as to not need two target constructors
                 std::vector<std::vector<Point> >* fuPtr;
                 fuPtr = &fullContour;
+                //std::cout<<"line 247";
                 return fullContour;
-                delete fuPtr;
+                // delete fuPtr;
               }
 
             }
 
         }
       }
-
-    delete vPtr;
+    //std::cout<<"line 257";
+    //delete vPtr;
 
     return std::vector<std::vector<Point> >();
 }

@@ -29,7 +29,7 @@ int main(){
         if(t != NULL)
         {
           processor->loadTarget(t);
-          //t->printPoints();
+          t->printPoints();
 
           double distance = processor->calculateDistance();
           double azimuth = processor->calculateAzimuth();
