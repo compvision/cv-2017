@@ -62,7 +62,7 @@ void Target::printPoints() //debugging
     std::cout << "LeftPoint: " << getLeftPoint().x << std::endl;
     std::cout << "RightPoint: " << getRightPoint().x << std::endl;
     std::cout << "LeftRightPoint: " << getLeftRightPoint().x << std::endl;
-    std::cout << "RightLeftPoint: " << getLeftRightPoint().x << std::endl;
+    std::cout << "RightLeftPoint: " << getRightLeftPoint().x << std::endl;
     std::cout << "Height: " << getHeight() << std::endl;
     std::cout << "Width: "  << getWidth() << std::endl;
 }

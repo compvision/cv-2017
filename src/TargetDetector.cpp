@@ -8,8 +8,9 @@ TargetDetector::TargetDetector() {
 }
 
 Target* TargetDetector::processImage(Mat input, bool tar) {
-    GaussianBlur(input,input,Size(3,3),1,1);
-    input = canny(thresholdImage(input,53,58,0,255,228,238));
+    GaussianBlur(input,input,Size(3,3),31);
+    //input = canny(thresholdImage(input,53,58,0,255,228,238));
+    input = thresholdImage(input,53,58,0,255,228,238);
 
     dilate(input, input, Mat());
 
@@ -137,8 +138,10 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
   std::vector<Point> outputContour;
   std::vector<cv::Point> outputContour1;
   std::vector<cv::Point> outputContour2;
-  std::vector<std::vector<cv::Point> > tempVV;
+  std::vector<std::vector<Point> >* vPtr;
+
   int tarNum = 0;
+  Target* first;
     for(int j = 0; j < contours.size(); j++)
     {
 
@@ -151,8 +154,8 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
         approxPolyDP(contours[j], outputContour, (cv::arcLength(cv::Mat(contours.at(j)), true) * 0.01), true);
       }
 
-
-        if (contourArea(outputContour) > 100 && outputContour.size() == 4) {
+        if (contourArea(outputContour) > 100 && outputContour.size() == 4)
+        {
             double maxCosine = 0;
             for(int j = 2; j <=4; j++)
             {
@@ -169,36 +172,52 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
             if(maxCosine < .2)
 
             {
-
-
-
-              tempVV.push_back (outputContour);
-              tempVV.push_back (outputContour);
+              std::vector<std::vector<cv::Point> > tempVV;
+              std::vector<std::vector<Point> > fullContour;
+              std::vector<std::vector<Point> >* vPtr;
+              vPtr = &tempVV;
+              if (tempVV.size() == 0) {
+              tempVV.push_back(outputContour);
+              tempVV.push_back(outputContour);
+            } else {
+              tempVV[0] = outputContour;
+              tempVV[1] = outputContour;
+            }
               // TempV is put in twice to the tempVV vector to serve as a placeholder
-
               Target* target = new Target(tempVV);
               // TempVV is temporary and is used to call getType
-              Target* first;
-              if (tar == target->getType() && tar == true && tarNum == 0) {
-
-                first = new Target(tempVV);
-
-              }
               /* if the target called by the main is the same as the one found
                  and if it is gears on first time*/
               //std::cout << "Type: " << target->getType() << std::endl;
               if (tar == target->getType() && tar == true && tarNum == 1) {
 
-                outputContour2 = outputContour;
-                //std::cout << "Found Candidate for 2" << std::endl;
+
+                std::cout << "Found Candidate for 2" << std::endl;
                 //Gives a range of error of 6 so that it doesn't detect the same contour twice
-                //((first->getRightPoint().x - 40 > target->getRightPoint().x) || (first->getLeftPoint().x + 40 < target->getLeftPoint().x))
-                if ((( outputContour1[0].x > outputContour2[0].x + 3) || ( outputContour1[0].x < outputContour2[0].x - 3)) && (&outputContour1[0] != NULL || &outputContour2[1] != NULL))
+
+                //std::cout << "addresses:" << std::endl;
+                //std::cout << first << std::endl;
+                //std::cout << target << std::endl;
+
+                //std::cout << "First: " << first->getLeftPoint() << std::endl;
+                //std::cout << "Second: " << target->getLeftPoint() << std::endl;
+
+                //std::cout << fabs(first->getRightPoint().x - target->getLeftPoint().x) << std::endl;
+                //std::cout << fabs(first->getRightPoint().x - first->getLeftPoint().x) << std::endl;
+                //std::cout << first->getWidth() << std::endl;
+
+                if ((fabs(first->getRightPoint().x - first->getLeftPoint().x) + 10 < fabs(first->getRightPoint().x - target->getLeftPoint().x)) && (&outputContour1 != NULL || &outputContour2 != NULL))
                 {
-                  //std::cout << "Found 2" << std::endl;
+                  //std::cout << "First" << std::endl;
+                  //first->printPoints();
+                  //std::cout << "Second" << std::endl;
+                  //target->printPoints();
+                  outputContour2 = outputContour;
+                  std::cout << "Found 2" << std::endl;
                   tarNum = 0;
 
                 // whichever has the least has the left most points
+                if (fullContour.size() == 0) {
                   if (outputContour1[1].x > outputContour2[1].x) {
                     fullContour.push_back (outputContour2); // first will be left, then right
                     fullContour.push_back (outputContour1);
@@ -206,32 +225,55 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
                     fullContour.push_back (outputContour1);
                     fullContour.push_back (outputContour2);
                   }
+                } else {
+                  if (outputContour1[1].x > outputContour2[1].x) {
+                    fullContour[0] = outputContour2; // first will be left, then right
+                    fullContour[1] = outputContour1;
+                  } else {
+                    fullContour[0] = outputContour1;
+                    fullContour[1] = outputContour2;
+                  }
+                }
                 //std::cout << "Returning" << std::endl;
+                std::vector<std::vector<Point> >* fuPtr;
+                fuPtr = &fullContour;
                 return fullContour;
                 }
-                
+
               }
 
               if (tar == target->getType() && tar == true && tarNum == 0) {
-                //std::cout << "Found 1" << std::endl;
+                std::cout << "Found 1" << std::endl;
+                first = new Target(tempVV);
                 outputContour1 = outputContour;
                 tarNum = 1;
               }
+
               // Gears on second try
 
               //if boiler was called
               if (tar == target->getType() && tar == false) {
-
+                if (fullContour.size() == 0){
                 fullContour.push_back (outputContour);
                 fullContour.push_back (outputContour);
+              } else {
+                fullContour[0] = outputContour;
+                fullContour[1] = outputContour;
+              }
                 // Both contours are the same as to not need two target constructors
-
+                std::vector<std::vector<Point> >* fuPtr;
+                fuPtr = &fullContour;
+                //std::cout<<"line 247";
                 return fullContour;
+                // delete fuPtr;
               }
 
             }
 
         }
       }
+    //std::cout<<"line 257";
+    //delete vPtr;
+
     return std::vector<std::vector<Point> >();
 }

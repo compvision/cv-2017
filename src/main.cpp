@@ -87,35 +87,36 @@ int main(int argc, char* argv[])
 	            foundGear = true;
 	        } */
 
-        bool typeG;
-        bool typeB;
+        bool typeG = false;
+        bool typeB = false;
         std::cout<<"right"<<std::endl;
         if (targetG != NULL || targetB != NULL) {
          std::cout<<"in if"<<std::endl;
 
-         if(targetG != NULL)
-         typeG = targetG -> getType();
+         if(targetG != NULL) {
+          typeG = targetG -> getType();
+          std::cout << "Got Type Gears: " << typeG << std::endl;
+          foundGear = true;
+        }
 
-        if(targetB != NULL)
+        if(targetB != NULL) {
          typeB = targetB -> getType();
+         std::cout << "Got Type Boiler: " << typeB << std::endl;
+         foundBoiler = true;
+        }
 
 
-
-  				if (typeG==true)
+  			/*	if (typeG==true)
   				{
-  						foundGear = true;
-  				}
-  	  		if (typeG==false)
-  				{
-  						foundGear = false;
-  				}
-  				if (typeB==true)
-  				{
-  						foundBoiler = true;
+  					foundGear = true;
+  				} else {
+  					foundGear = false;
   				}
   				if (typeB==false)
   				{
-  						foundBoiler = false;
+  					foundBoiler = true;
+  				} else {
+  					foundBoiler = false;
   				}
           /*if ((*targetB).contours.size() != 0)
           {
@@ -123,7 +124,7 @@ int main(int argc, char* argv[])
           }*/
   	  		std::cout <<"About to check the value of foundTarget" << std::endl;
 
-  		    if(foundBoiler)
+  		    if(foundBoiler == true)
   			  {
   				std::cout <<"Boiler was found " << std::endl;
   				if(config.getIsDebug())
@@ -174,7 +175,8 @@ int main(int argc, char* argv[])
   				}
 
   				if(config.getIsDebug()){
-  					std::cout << "Target Found! Distance (Boiler): " << distance;
+  					std::cout << "Target Found!" << std::endl;
+            std::cout << "Distance (Boiler): " << distance << std::endl;
   					std::cout << "Altitude (Boiler): " << altitude << std::endl;
   					std::cout << "Azimuth (Boiler): " << azimuth << std::endl;
   				}
@@ -186,7 +188,7 @@ int main(int argc, char* argv[])
   					msg.append("false;");
   			}
 
-  	        if(foundGear)
+  	        if(foundGear == true)
   	        {
                std::cout <<"Gear was found " << std::endl;
                if(config.getIsDebug())
@@ -240,7 +242,8 @@ int main(int argc, char* argv[])
   					  }
 
       				if(config.getIsDebug()){
-                	std::cout << "Target Found! Distance (Gears): " << distance;
+                std::cout << "Target Found!" << std::endl;
+                	std::cout << "Distance (Gears): " << distance << std::endl;
   	              std::cout << "Altitude (Gears): " << altitude << std::endl;
   	              std::cout << "Azimuth (Gears): " << azimuth << std::endl;
   	          }
@@ -256,7 +259,7 @@ int main(int argc, char* argv[])
   			{
   				networkController.sendMessage(msg);
   			}
-
+            GaussianBlur(image,image,Size(3,3),31);
   	        imshow("Live Video Feed", image);
   	        loop++;
   	        delete targetG;
