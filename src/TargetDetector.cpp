@@ -8,8 +8,9 @@ TargetDetector::TargetDetector() {
 }
 
 Target* TargetDetector::processImage(Mat input, bool tar) {
-    GaussianBlur(input,input,Size(3,3),1,1);
-    input = canny(thresholdImage(input,53,58,0,255,228,238));
+    GaussianBlur(input,input,Size(3,3),31);
+    //input = canny(thresholdImage(input,53,58,0,255,228,238));
+    input = thresholdImage(input,53,58,0,255,228,238);
 
     dilate(input, input, Mat());
 
