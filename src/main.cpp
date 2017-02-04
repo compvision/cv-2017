@@ -79,8 +79,7 @@ int main(int argc, char* argv[])
 	    	//Detects if Target matches Boiler reflective tape
       	if(config.getIsDebug())
 	      std::cout << "Image Processed by Target Detector" << std::endl;
-        bool foundGear = false;
-				bool foundBoiler = false;
+       
 
 	        /* if ((*targetG).edgeL.size() != 0)
 	        {
@@ -126,7 +125,7 @@ int main(int argc, char* argv[])
 
   		    if(foundBoiler)
   			  {
-				String boiler = "true;"
+				String boiler = "true;";
   				std::cout <<"Boiler was found " << std::endl;
   				if(config.getIsDebug())
   					std::cout << "Image Being Processed" << std::endl;
@@ -169,7 +168,7 @@ int main(int argc, char* argv[])
 
   		    if (config.getIsNetworking())
   				{
-  					msg.append("false;" + "true;" + "0;0;0;"
+  					msg.append("false;true;0;0;0;" +
   					boost::lexical_cast<std::string> (boilerDistance) + ";" +
   					boost::lexical_cast<std::string> (boilerAzimuth) + ";" +
   					boost::lexical_cast<std::string> (boilerAltitude) + ";");
@@ -191,7 +190,7 @@ int main(int argc, char* argv[])
 
   	        if(foundGear)
   	        {
-			String gear = "true;"
+			String gear = "true;";
                std::cout <<"Gear was found " << std::endl;
                if(config.getIsDebug())
                std::cout << "Image Being Processed" << std::endl;
@@ -235,12 +234,13 @@ int main(int argc, char* argv[])
   			//for background
   	                imshow("General", background);
 
+				std::string zero = "0;0;0;";
               if (config.getIsNetworking())
   				    {
-  			          msg.append("true;" + "false;"
-  			          boost::lexical_cast<std::string> (distance) + ";" +
-        					boost::lexical_cast<std::string> (azimuth) + ";" +
-  		      			boost::lexical_cast<std::string> (altitude) + ";" + "0;0;0;");
+  			          msg.append("true;false;" + 
+  			          boost::lexical_cast<std::string> (gearDistance) + ";" +
+        					boost::lexical_cast<std::string> (gearAzimuth) + ";" +
+  		      			boost::lexical_cast<std::string> (gearAltitude) + ";" + zero);
   					  }
 
       				if(config.getIsDebug()){
@@ -254,7 +254,7 @@ int main(int argc, char* argv[])
   	        else
   	        {
   	          if (config.getIsNetworking())
-  	              msg.append("false;" + "false;");
+  	              msg.append("false;false;");
   	        }
 
   			if(config.getIsNetworking())
