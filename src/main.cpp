@@ -50,7 +50,8 @@ int main(int argc, char* argv[])
     int loop = 1;
     cv::namedWindow("Live Video Feed", cv::WINDOW_NORMAL);
     cv::namedWindow("General", cv::WINDOW_NORMAL);
-
+    
+	int ping = 1;
     while(cv::waitKey(30) != 27)
     {
 		cv::Mat background(Size(1000,1000), CV_8UC1, Scalar(255, 255, 255 ));
@@ -59,10 +60,16 @@ int main(int argc, char* argv[])
 
 	    std::cout << "While Loop #" << loop << std::endl;
 
-		if(config.getIsNetworking()){
-			std::cout << "we are waiting for ping\n";
-	    	//networkController.waitForPing();
-			std::cout << "we have revieced ping\n";
+		if (ping == 1)
+		{
+		
+			if(config.getIsNetworking())
+			{
+				std::cout << "we are waiting for ping\n";
+	    		networkController.waitForPing();
+				std::cout << "we have revieced ping\n";
+			}
+			ping++;
 		}
 
 		image = camera.getImage();
