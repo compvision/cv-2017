@@ -14,17 +14,31 @@ int main(){
     TargetProcessor* processor = new TargetProcessor();
     TargetDetector* detector = new TargetDetector();
 
+	cout<< "right here" << endl;
+
     VideoDevice* cap = new VideoDevice();
+	
+cout <<"right here 2" << endl;
     //int dev = atoi(argv[1]);
     cap -> startCapture(1);
+
+cout << "right here 3" <<endl;
 
     cv::Mat rawImg;
 
     while(cv::waitKey(30) != 27)
     {
+cout << "right here 4" << endl;
+	while(true)
+	{
         rawImg = cap -> getImage();
+	cv::imshow("Data", rawImg);
+	}
+cout << "right here 5" << endl;
         Target* t = detector->processImage(rawImg, true);
+cout << "right here 6" << endl;
         cv::imshow("Data", rawImg);
+cout << "right here 7" << endl;
 
         if(t != NULL)
         {

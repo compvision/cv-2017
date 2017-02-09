@@ -6,7 +6,8 @@ using namespace cv;
 class Target
 {
 public:
-    Target(std::vector<std::vector<Point> > contour);
+    Target(std::vector<std::vector<cv::Point> > contour);
+    Target(std::vector<cv::Point> contour);
     double getHeight();
     double getWidth();
     void printPoints();

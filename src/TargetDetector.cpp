@@ -100,7 +100,12 @@ std::vector<Point> TargetDetector::arcCheck1(std::vector<Point> input)
 {
   double max = input[0].x;
   double min = input[0].x;
-  std::vector<Point> output;
+	
+  double maxRY = 0;
+  double minRY = 1000;
+  double maxLY = 0;
+  double minLY = 1000;
+  std::vector<cv::Point> output = new std::vector<Point>();
 
   for (int i = 0; i < input.size(); i++)
   {
@@ -108,172 +113,146 @@ std::vector<Point> TargetDetector::arcCheck1(std::vector<Point> input)
     {
       max = input[i].x;
     }
-    if (input[i].x < min)
+    else if (input[i].x < min)
     {
       min = input[i].x;
     }
   }
-  cv::Point New(0,0);
+
+  //cv::Point newPt(0,0);
   for (int i = 0; i < input.size(); i++)
   {
-    if (input[i].x > max - 5 && input[i].x < max + 5)
+    if (input[i].x > max - 7 && input[i].x < max + 7)
     {
-      New = input[i];
-      output.push_back (New);
+      //newPt = input[i];
+      if(input[i].y < minRY)
+      {
+        minRY = input[i].y;
+      }
+      else if(input[i].y > maxRY)
+      {
+        maxRY = input[i].y;
+      }
+      output.push_back(input[i]);
     }
-    if (input[i].x > min - 5 && input[i].x < min + 5)
+    else if (input[i].x > min - 7 && input[i].x < min + 7)
     {
-      New = input[i];
-      output.push_back (New);
+      //newPt = input[i];
+      if(input[i].y < minRY)
+      {
+        minRY = input[i].y;
+      }
+      else if(input[i].y > maxRY)
+      {
+        maxRY = input[i].y;
+      }
+      output.push_back(input[i]);
     }
 
   }
-  return output;
+
+  int diff = maxRY-minRY;
+  int diff2 = maxLY - minLY;
+  if( output.size() > 0 && (diff - diff2 < 20))
+  {
+    return output;
+  }
+  else
+  { 
+    return std::vector<cv::Point>();
+  }
 }
 
-std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std::vector<Point> > contours, bool tar)
+std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std::vector<Point> > contours, cv::Mat img, bool tar)
 {
-//bool tar: true = gears, false = boiler
-  std::vector<Point> arcContour;
-  std::vector<Point> outputContour;
-  std::vector<cv::Point> outputContour1;
-  std::vector<cv::Point> outputContour2;
-  std::vector<std::vector<Point> >* vPtr;
+    //bool tar: true = gears, false = boiler
+    std::vector<cv::Point> arcContour;
+    std::vector<cv::Point> outputContour;
+    std::vector<cv::Point> outputContour1;
+    std::vector<cv::Point> outputContour2;
+    std::vector<std::vector<cv::Point> > gearVector;
+    std::vector<std::vector<cv::Point> > boilerVector;
 
-  int tarNum = 0;
-  Target* first;
-    for(int j = 0; j < contours.size(); j++)
-    {
-
-      if (tar == false)
-      {
-        arcContour = arcCheck1(contours[j]);
-        approxPolyDP(arcContour, outputContour, (cv::arcLength(cv::Mat(contours.at(j)), true) * 0.01), true);
-      } else
-      {
-        approxPolyDP(contours[j], outputContour, (cv::arcLength(cv::Mat(contours.at(j)), true) * 0.01), true);
-      }
-
-        if (contourArea(outputContour) > 100 && outputContour.size() == 4)
+    int tarNum = 0;
+    Target* first;
+	
+    if (tar == false)
+    { 
+	for(int j = 0; j< contours.size(); j++)
         {
-            double maxCosine = 0;
-            for(int j = 2; j <=4; j++)
+            arcContour = arcCheck1(contours[j]);
+          
+            if(arcContour.size() > 0)
             {
-                double cosine;
-                try {
-                    cosine = fabs(cos(angle(outputContour.at(j%4), outputContour.at(j-2), outputContour.at(j-1))));
-                }
-                catch(std::exception e){
-                    std:: cout << e.what();
-                }
-                maxCosine = MAX(maxCosine, cosine);
-            }
-            //filters out contours that don't have only 90deg anlges
-            if(maxCosine < .2)
+                approxPolyDP(arcContour, outputContour, (cv::arcLength(cv::Mat(contours.at(j)), true) * 0.01), true);    
+                boilerVector.push_back(outputContour);
 
+                
+            }
+            int maxArea = 0;
+            int index = 0;
+            for(int i = 0; i < boilerVector.size(); i++)
             {
-              std::vector<std::vector<cv::Point> > tempVV;
-              std::vector<std::vector<Point> > fullContour;
-              std::vector<std::vector<Point> >* vPtr;
-              vPtr = &tempVV;
-              if (tempVV.size() == 0) {
-              tempVV.push_back(outputContour);
-              tempVV.push_back(outputContour);
-            } else {
-              tempVV[0] = outputContour;
-              tempVV[1] = outputContour;
-            }
-              // TempV is put in twice to the tempVV vector to serve as a placeholder
-              Target* target = new Target(tempVV);
-              // TempVV is temporary and is used to call getType
-              /* if the target called by the main is the same as the one found
-                 and if it is gears on first time*/
-              //std::cout << "Type: " << target->getType() << std::endl;
-              if (tar == target->getType() && tar == true && tarNum == 1) {
-
-
-                std::cout << "Found Candidate for 2" << std::endl;
-                //Gives a range of error of 6 so that it doesn't detect the same contour twice
-
-                //std::cout << "addresses:" << std::endl;
-                //std::cout << first << std::endl;
-                //std::cout << target << std::endl;
-
-                //std::cout << "First: " << first->getLeftPoint() << std::endl;
-                //std::cout << "Second: " << target->getLeftPoint() << std::endl;
-
-                //std::cout << fabs(first->getRightPoint().x - target->getLeftPoint().x) << std::endl;
-                //std::cout << fabs(first->getRightPoint().x - first->getLeftPoint().x) << std::endl;
-                //std::cout << first->getWidth() << std::endl;
-
-                if ((fabs(first->getRightPoint().x - first->getLeftPoint().x) + 10 < fabs(first->getRightPoint().x - target->getLeftPoint().x)) && (&outputContour1 != NULL || &outputContour2 != NULL))
+                if(contourArea(boilerVector[i]) > maxArea)
                 {
-                  //std::cout << "First" << std::endl;
-                  //first->printPoints();
-                  //std::cout << "Second" << std::endl;
-                  //target->printPoints();
-                  outputContour2 = outputContour;
-                  std::cout << "Found 2" << std::endl;
-                  tarNum = 0;
-
-                // whichever has the least has the left most points
-                if (fullContour.size() == 0) {
-                  if (outputContour1[1].x > outputContour2[1].x) {
-                    fullContour.push_back (outputContour2); // first will be left, then right
-                    fullContour.push_back (outputContour1);
-                  } else {
-                    fullContour.push_back (outputContour1);
-                    fullContour.push_back (outputContour2);
-                  }
-                } else {
-                  if (outputContour1[1].x > outputContour2[1].x) {
-                    fullContour[0] = outputContour2; // first will be left, then right
-                    fullContour[1] = outputContour1;
-                  } else {
-                    fullContour[0] = outputContour1;
-                    fullContour[1] = outputContour2;
-                  }
+                    maxArea = contourArea(boilerVector[i]);    
+                    index = i;
                 }
-                //std::cout << "Returning" << std::endl;
-                std::vector<std::vector<Point> >* fuPtr;
-                fuPtr = &fullContour;
-                return fullContour;
-                }
-
-              }
-
-              if (tar == target->getType() && tar == true && tarNum == 0) {
-                std::cout << "Found 1" << std::endl;
-                first = new Target(tempVV);
-                outputContour1 = outputContour;
-                tarNum = 1;
-              }
-
-              // Gears on second try
-
-              //if boiler was called
-              if (tar == target->getType() && tar == false) {
-                if (fullContour.size() == 0){
-                fullContour.push_back (outputContour);
-                fullContour.push_back (outputContour);
-              } else {
-                fullContour[0] = outputContour;
-                fullContour[1] = outputContour;
-              }
-                // Both contours are the same as to not need two target constructors
-                std::vector<std::vector<Point> >* fuPtr;
-                fuPtr = &fullContour;
-                //std::cout<<"line 247";
-                return fullContour;
-                // delete fuPtr;
-              }
+		std::vector<std::vector<cv::Point> > returnVector = new std::vector<std::vector<cv::Point> > ();
+                returnVector.pushBack(boilerVector[i]);
+                return returnVector;
 
             }
+	}
+    } 
+    else
+    {
+        for(int j = 0; j < contours.size(); j++)
+        {
+            approxPolyDP(contours[j], outputContour, (cv::arcLength(cv::Mat(contours.at(j)), true) * 0.01), true);
+            if (contourArea(outputContour) > 100 && outputContour.size() == 4)
+            {
+                double maxCosine = 0;
+                for(int j = 2; j <=4; j++)
+                {
+                    double cosine;
+                    try {
+                        cosine = fabs(cos(angle(outputContour.at(j%4), outputContour.at(j-2), outputContour.at(j-1))));
+                    }
+                    catch(std::exception e){
+                        std:: cout << e.what();
+                    }
+                    maxCosine = MAX(maxCosine, cosine);
+                }
+            //filters out contours that don't have only 90deg anlges
+                if(maxCosine < .2)
+                {
+                    gearVector.push_back(outputContour);
+                }
+            }
 
+	    for( int i = 0; i < gearVector.size(); i++)
+            {
+                Target* tempOne = new Target(gearVector[i]);
+                for(int k = i; k < gearVector.size()-1; k++)
+                {
+                     Target* tempTwo = new Target(gearVector[k+1]);
+
+                    if(abs(tempOne->getCenter().y - tempTwo->getCenter().y) < 13))
+                    {
+                        std::vector<std::vector<cv::Point> >() returnVector;
+                        returnVector.push_back(gearVector[i]);
+                        returnVector.push_back(gearVector[k+1]);
+                        return returnVector();
+                    }
+                }   
+            }
         }
-      }
-    //std::cout<<"line 257";
-    //delete vPtr;
+    }
+  
+    Scalar color(255,0,0);
+    cv::drawContours(img, gearVector, 0, color, 10);
 
-    return std::vector<std::vector<Point> >();
+    
+    return std::vector<std::vector<cv::Point> >();
 }
