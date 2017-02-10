@@ -16,7 +16,7 @@ Target* TargetDetector::processImage(Mat input, bool tar) {
 
     std::vector<std::vector<Point> > contours = contour(input);
     // std::cout << "not contours" << std::endl;
-    std::vector<std::vector<Point> > finalContour = filterContours(contours, tar);
+    std::vector<std::vector<Point> > finalContour = filterContours(contours, input, tar);
 
 
 
@@ -105,7 +105,7 @@ std::vector<Point> TargetDetector::arcCheck1(std::vector<Point> input)
   double minRY = 1000;
   double maxLY = 0;
   double minLY = 1000;
-  std::vector<cv::Point> output = new std::vector<Point>();
+  std::vector<cv::Point> output;
 
   for (int i = 0; i < input.size(); i++)
   {
@@ -186,11 +186,12 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
             {
                 approxPolyDP(arcContour, outputContour, (cv::arcLength(cv::Mat(contours.at(j)), true) * 0.01), true);    
                 boilerVector.push_back(outputContour);
-
-                
+   
             }
+
             int maxArea = 0;
             int index = 0;
+
             for(int i = 0; i < boilerVector.size(); i++)
             {
                 if(contourArea(boilerVector[i]) > maxArea)
@@ -198,11 +199,13 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
                     maxArea = contourArea(boilerVector[i]);    
                     index = i;
                 }
-		std::vector<std::vector<cv::Point> > returnVector = new std::vector<std::vector<cv::Point> > ();
-                returnVector.pushBack(boilerVector[i]);
-                return returnVector;
-
             }
+	    
+ 	    std::vector<std::vector<cv::Point> > returnVector;
+            returnVector.push_back(boilerVector[index]);
+            
+	    if(returnVector.size() > 0)
+                return returnVector;
 	}
     } 
     else
@@ -238,12 +241,12 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
                 {
                      Target* tempTwo = new Target(gearVector[k+1]);
 
-                    if(abs(tempOne->getCenter().y - tempTwo->getCenter().y) < 13))
+                    if(abs(tempOne->getCenter().y - tempTwo->getCenter().y) < 13)
                     {
-                        std::vector<std::vector<cv::Point> >() returnVector;
+                        std::vector<std::vector<cv::Point> > returnVector;
                         returnVector.push_back(gearVector[i]);
                         returnVector.push_back(gearVector[k+1]);
-                        return returnVector();
+                        return returnVector;
                     }
                 }   
             }
@@ -251,8 +254,9 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
     }
   
     Scalar color(255,0,0);
-    cv::drawContours(img, gearVector, 0, color, 10);
-
+    Scalar color2(0,0,255);
+    cv::drawContours(img, gearVector, -1, color, 10);
+    cv::drawContours(img, boilerVector, -1, color2, 10);
     
     return std::vector<std::vector<cv::Point> >();
 }

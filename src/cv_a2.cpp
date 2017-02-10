@@ -20,7 +20,7 @@ int main(){
 	
 cout <<"right here 2" << endl;
     //int dev = atoi(argv[1]);
-    cap -> startCapture(1);
+    cap -> startCapture(0);
 
 cout << "right here 3" <<endl;
 
@@ -29,11 +29,7 @@ cout << "right here 3" <<endl;
     while(cv::waitKey(30) != 27)
     {
 cout << "right here 4" << endl;
-	while(true)
-	{
-        rawImg = cap -> getImage();
-	cv::imshow("Data", rawImg);
-	}
+	rawImg = cap -> getImage();
 cout << "right here 5" << endl;
         Target* t = detector->processImage(rawImg, true);
 cout << "right here 6" << endl;
