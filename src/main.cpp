@@ -180,8 +180,8 @@ int main(int argc, char* argv[])
   	                cv::putText(background, azi, cv::Point(50,400),
   	                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
   	                1);
-  					//for background
-  	                imshow("General", background);
+			if (!config.getIsHeadless)  					//for background
+  	                	imshow("General", background);
 	
 					std::string zero = "0;0;0;";
                if (config.getIsNetworking())
@@ -242,6 +242,7 @@ int main(int argc, char* argv[])
   				cv::putText(background, azi, cv::Point(50,400),
   				cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
   				// for background
+			    if (!config.getIsHeadless)
   				imshow("General", background);
 
   		    	if (config.getIsNetworking())
@@ -278,7 +279,8 @@ int main(int argc, char* argv[])
 		    //refresh loop
  	   }
 	  GaussianBlur(image,image,Size(3,3),31);
-	  imshow("Live Video Feed", image);
+	    if (!config.getIsHeadless)
+	  	imshow("Live Video Feed", image);
     }
     return 0;
 }
