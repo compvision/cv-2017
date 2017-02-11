@@ -20,7 +20,7 @@ Target* TargetDetector::processImage(Mat input, bool tar) {
 
 
 
-    if (!config.getIsHeadless)
+    //if (!config.getIsHeadless)
         imshow("Contours",input);
     // std::cout << "not filterContours" << std::endl;
 
