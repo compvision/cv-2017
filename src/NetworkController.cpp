@@ -47,9 +47,14 @@ void NetworkController::startServer()
 void NetworkController::waitForPing()
 {
     std::vector<char> buffer(256);
+	//std::cout << "\n\nerror at line 50\n\n";
     socket->read_some(boost::asio::buffer(buffer), error);
+	//std::cout << "\n\nerror at line 52\n\n";
     if (error == boost::asio::error::eof)
+	{
+		//std::cout << "\n\nerror at line 55\n\n";
         exit(EXIT_SUCCESS);
+	}
     else if (error)
         throw boost::system::system_error(error);
 }
