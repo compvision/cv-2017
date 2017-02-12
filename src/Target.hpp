@@ -13,7 +13,7 @@ public:
     void printPoints();
     Point getCenter();
     void setTar(bool tar);
-    //bool getType();
+    bool getType();
     bool getTar();
     Point getTopPoint();
     Point getBottomPoint();
