@@ -8,11 +8,13 @@ TargetDetector::TargetDetector() {
 }
 
 Target* TargetDetector::processImage(Mat input, bool tar) {
-    imshow("orig", input);
+    
     GaussianBlur(input,input,Size(3,3),31);
     //input = canny(thresholdImage(input,53,58,228,238));
-    input = thresholdImage(input,0,255,0,255);
-
+    input = thresholdImage(input,53,58,228,238);
+    imshow("Threshold", input);
+    input = canny(input);
+    imshow("Canny", input);
     dilate(input, input, Mat());
 
     std::vector<std::vector<Point> > contours = contour(input);
@@ -59,7 +61,7 @@ Mat TargetDetector::thresholdImage(Mat input, int minHue, int maxHue, int minVal
     Mat threshLow;
     Mat threshHigh;
     Mat hueResult;
-    Mat satResult;
+    //Mat satResult;
     Mat valResult;
 
     //seperating image into HSV (or in this case, really just HV)
@@ -87,7 +89,7 @@ Mat TargetDetector::thresholdImage(Mat input, int minHue, int maxHue, int minVal
     threshold(val, threshHigh, maxVal, 255, THRESH_BINARY_INV);
     valResult = threshLow & threshHigh;
 
-    Mat combined = hueResult & valResult & satResult;
+    Mat combined = hueResult & valResult; //& satResult;
 
     return combined;
 }
@@ -231,7 +233,7 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
   	        return returnVector;
 	    }
 	}
-    } 
+} 
     else
     {
 	std::cout << "filtercontour: before gear detection " << std::endl; 
@@ -258,8 +260,8 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
                     gearVector.push_back(outputContour);
                 }
             }
-
-	    for( int i = 0; i < gearVector.size(); i++)
+		}
+	    	for( int i = 0; i < gearVector.size(); i++)
             {
                 Target* tempOne = new Target(gearVector[i]);
                 for(int k = i; k < gearVector.size()-1; k++)
@@ -269,20 +271,26 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
                     if(abs(tempOne->getCenter().y - tempTwo->getCenter().y) < 13)
                     {
                         std::vector<std::vector<cv::Point> > returnVector;
-                        returnVector.push_back(gearVector[i]);
-                        returnVector.push_back(gearVector[k+1]);
+                        returnVector->push_back(gearVector[i]);
+                        returnVector->push_back(gearVector[k+1]);
+                        
+                        Scalar color(255,0,0);
+                        cv::drawContours(img, returnVector, -1, color, 10);
+                        std::cout << "found gear: " << std::endl;
+                        std::cout << "target one center : " << tempOne->getCenter() << std::endl;
+                        std::cout << "target two center : " << tempTwo->getCenter() << std::endl;
                         return returnVector;
                     }
                 }   
             }
-        }
+        
     }
   
-    Scalar color(255,0,0);
+    /*Scalar color(255,0,0);
     Scalar color2(0,0,255);
     cv::drawContours(img, gearVector, -1, color, 10);
     cv::drawContours(img, boilerVector, -1, color2, 10);
-   
+   */
     std::cout << "filtercontour: before return an empty vector "<<  std::endl;
     return std::vector<std::vector<cv::Point> >();
 }
