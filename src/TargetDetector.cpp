@@ -13,8 +13,8 @@ Target* TargetDetector::processImage(Mat input, bool tar) {
     //input = canny(thresholdImage(input,53,58,228,238));
     input = thresholdImage(input,53,58,228,238);
     imshow("Threshold", input);
-    input = canny(input);
-    imshow("Canny", input);
+   // input = canny(input);
+   // imshow("Canny", input);
     dilate(input, input, Mat());
 
     std::vector<std::vector<Point> > contours = contour(input);
@@ -261,18 +261,42 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
                 }
             }
 		}
+		
+				Scalar color(255,0,0);
+                cv::drawContours(img, gearVector, -1, color, 10);
+                for(int j = 0; j < gearVector.size(); j++)
+                {
+                	Target temp(gearVector[j]);
+                	std::cout << "center of gear vector index " << j << " = " << temp.getCenter() << std::endl; 
+                }
+		
+			std::cout << "before for loop gear Vector size : " << gearVector.size() << std::endl;
 	    	for( int i = 0; i < gearVector.size(); i++)
             {
-                Target* tempOne = new Target(gearVector[i]);
-                for(int k = i; k < gearVector.size()-1; k++)
-                {
-                     Target* tempTwo = new Target(gearVector[k+1]);
+            
+            	std::cout << "new i : " << i << std::endl;
+            	std::cout << " gearVecotr size " << gearVector.size() << std::endl; 
+           
 
-                    if(abs(tempOne->getCenter().y - tempTwo->getCenter().y) < 13)
+            	
+                Target* tempOne = new Target(gearVector[i]);
+                for(int k = i+1; k < gearVector.size(); k++)
+                {
+                	 std::cout << "i : " << i << "k : " << k << std::endl; 
+                     Target* tempTwo = new Target(gearVector[k]);
+						
+					double val = cv::matchShapes(gearVector[i], gearVector[k], CV_CONTOURS_MATCH_I1, 0);	
+						
+                    if(val < 0.2)
                     {
                         std::vector<std::vector<cv::Point> > returnVector;
-                        returnVector->push_back(gearVector[i]);
-                        returnVector->push_back(gearVector[k+1]);
+                        
+                        
+                        
+                        std::cout << "val : " << val << std::endl;
+                        
+                        returnVector.push_back(gearVector[i]);
+                        returnVector.push_back(gearVector[k]);
                         
                         Scalar color(255,0,0);
                         cv::drawContours(img, returnVector, -1, color, 10);
