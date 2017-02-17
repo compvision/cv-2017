@@ -6,21 +6,8 @@
 
 Target::Target(std::vector<std::vector<cv::Point> > contour)
 {
-<<<<<<< HEAD
     edgeL = contour[0];
     edgeR = contour[1];
-=======
-    if(contour.size() > 1) 
-    {
-        edgeL = contour[0];
-        edgeR = contour[1];
-    }
-    else
-    {
-        edgeL = contour[0];
-        edgeR = contour[0];
-    }
->>>>>>> 3c730362ed6b5eec0a671b0e86f2f5ccc9441881
 
     //splits the inputted vector into two shapes again
 }
