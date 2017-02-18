@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
 	    }
 	    Target* targetG = detector.processImage(image, true); //Gears
 		  //Detects if Target matches Gear reflective tape
-	   	Target* targetB = detector.processImage(image, false); //Boiler
+    	Target* targetB = detector.processImage(image, false); //Boiler
 	    	//Detects if Target matches Boiler reflective tape
       	if(config.getIsDebug()){
 	      std::cout << "Image Processed by Target Detector" << std::endl;

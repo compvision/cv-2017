@@ -6,7 +6,7 @@
 
 Target::Target(std::vector<std::vector<cv::Point> > contour)
 {
-    if(contour.size() > 1) 
+    if(contour.size() > 1)
     {
         edgeL = contour[0];
         edgeR = contour[1];
@@ -20,6 +20,11 @@ Target::Target(std::vector<std::vector<cv::Point> > contour)
     //splits the inputted vector into two shapes again
 }
 
+Target::Target(std::vector<cv::Point> contour)
+{
+    edgeL = contour;
+    edgeR = contour;
+}
 
 void Target::setTar(bool tar) {
 
