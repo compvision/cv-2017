@@ -49,11 +49,11 @@ int main(int argc, char* argv[])
     cv::Mat image;
 
     int loop = 1;
-    cv::namedWindow("Live Video Feed", cv::WINDOW_NORMAL);
-    cv::namedWindow("General", cv::WINDOW_NORMAL);
-    
+    ////cv::namedWindow("Live Video Feed", cv::WINDOW_NORMAL);
+    //cv::namedWindow("General", cv::WINDOW_NORMAL);
+
 	int ping = 1;
-	
+
     while(cv::waitKey(30) != 27)
     {
 		cv::Mat background(Size(1000,1000), CV_8UC1, Scalar(255, 255, 255 ));
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 
 		if (ping == 1)
 		{
-		
+
 			if(config.getIsNetworking())
 			{
 				std::cout << "we are waiting for ping\n";
@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
 	          return -1;
 	    }
 	    else {
-	   	  imshow("Live Video Feed", image);     
+	   	  ////imshow("Live Video Feed", image);
 	   }
 
 	    if(config.getIsDebug()){
@@ -99,25 +99,25 @@ int main(int argc, char* argv[])
       	}
       	bool foundGear = false;
 		bool foundBoiler = false;
-	
+
         std::cout<<"right"<<std::endl;
 
-        if (targetG != NULL || targetB != NULL) 
+        if (targetG != NULL || targetB != NULL)
 		{
         	std::cout<<"in if"<<std::endl;
 
-            if(targetG != NULL) 
+            if(targetG != NULL)
 			{
 				foundGear = targetG -> getType();
             	std::cout << "Got Type Gears: " << foundGear << std::endl;
 				foundGear = true;
         	}
 
-        	if(targetB != NULL) 
+        	if(targetB != NULL)
 			{
 			    foundBoiler = targetB -> getType();
          		std::cout << "Got Type Boiler: " << foundBoiler << std::endl;
-         		foundBoiler = true; 
+         		foundBoiler = true;
             }
 
   	  		std::cout <<"About to check the value of foundTarget" << std::endl;
@@ -154,24 +154,24 @@ int main(int argc, char* argv[])
   	                std::string alt = "altitude (Gear): " + patch::to_string(gearAltitude);
   	                std::string azi = "azimuth (Gear): " + patch::to_string(gearAzimuth);
 
-  	                cv::putText(background, dis, cv::Point(50,100),
-  	                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
-  	                1);
+  	                //cv::putText(background, dis, cv::Point(50,100),
+  	                //cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
+  	                //1);
 
-  	                cv::putText(background, alt, cv::Point(50,200),
-  	                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
-  	                1);
+  	                //cv::putText(background, alt, cv::Point(50,200),
+  	                //cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
+  	                //1);
 
-  	                cv::putText(background, azi, cv::Point(50,400),
-  	                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
-  	                1);
-			if (config.getIsHeadless() == 0)  					//for background
-  	                	imshow("General", background);
-	
+  	                //cv::putText(background, azi, cv::Point(50,400),
+  	                //cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
+  	                //1);
+			//if (config.getIsHeadless() == 0)  					//for background
+  	                	////imshow("General", background);
+
 					std::string zero = "0;0;0;";
                if (config.getIsNetworking())
   	     	    {
-  		            msg.append("true;false;" + 
+  		            msg.append("true;false;" +
   			        boost::lexical_cast<std::string> (gearDistance) + ";" +
         		   	boost::lexical_cast<std::string> (gearAzimuth) + ";" +
   		      		boost::lexical_cast<std::string> (gearAltitude) + ";" + zero);
@@ -192,7 +192,7 @@ int main(int argc, char* argv[])
   				std::cout <<"Boiler was found " << std::endl;
   				if(config.getIsDebug())
   					std::cout << "Image Being Processed" << std::endl;
-  				
+
 				processor.loadTarget(targetB);
   					// middle value should be changed to object's real width (diameter of boiler is 15 in.)
 
@@ -218,17 +218,17 @@ int main(int argc, char* argv[])
   				std::string alt = "altitude (Boiler): " + patch::to_string(boilerAltitude);
   				std::string azi = "azimuth (Boiler): " + patch::to_string(boilerAzimuth);
 
-  				cv::putText(background, dis, cv::Point(50,100),
-  				cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
+  				//cv::putText(background, dis, cv::Point(50,100),
+  				//cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
 
-  				cv::putText(background, alt, cv::Point(50,200),
-  				cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
+  				//cv::putText(background, alt, cv::Point(50,200),
+  				//cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
 
-  				cv::putText(background, azi, cv::Point(50,400),
-  				cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
+  				//cv::putText(background, azi, cv::Point(50,400),
+  				//cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
   				// for background
 			    if (config.getIsHeadless()==0)
-  				imshow("General", background);
+  				////imshow("General", background);
 
   		    	if (config.getIsNetworking())
   				{
@@ -256,16 +256,16 @@ int main(int argc, char* argv[])
   			{
   				networkController.sendMessage(msg);
   			}
-  	        
-			std::cout << "\n\nUpdated Livefeed\n\n"; 
+
+			std::cout << "\n\nUpdated Livefeed\n\n";
   	        loop++;
   	        delete targetG;
        		delete targetB;
 		    //refresh loop
  	   }
 	  GaussianBlur(image,image,Size(3,3),31);
-	    if (config.getIsHeadless()==0)
-	  	imshow("Live Video Feed", image);
+	    if (config.getIsHeadless()==0){}
+	  	//imshow("Live Video Feed", image);
     }
     return 0;
 }

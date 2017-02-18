@@ -44,7 +44,7 @@ void GUIManager::show(bool isFile)
 {
     //isFile determines if image should be shown indefinitely
     //in File Mode, the main loop only runs once rather than continuously
-    cv::imshow("FRC Team 3341 Targeting", image);
+    //cv::imshow("FRC Team 3341 Targeting", image);
     if(isFile)
         cv::waitKey(0);
     else
