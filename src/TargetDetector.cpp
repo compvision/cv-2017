@@ -8,18 +8,18 @@ TargetDetector::TargetDetector() {
 }
 
 Target* TargetDetector::processImage(Mat input, bool tar) {
-    
+
     GaussianBlur(input,input,Size(3,3),31);
     //input = canny(thresholdImage(input,53,58,228,238));
     input = thresholdImage(input,53,58,228,238);
     imshow("Threshold", input);
-   // input = canny(input);
-   // imshow("Canny", input);
+    input = canny(input);
+    imshow("Canny", input);
     dilate(input, input, Mat());
 
     std::vector<std::vector<Point> > contours = contour(input);
     // std::cout << "not contours" << std::endl;
-	std::cout << "processimg: before filter contours" << std::endl; 
+	std::cout << "processimg: before filter contours" << std::endl;
    std::vector<std::vector<Point> > finalContour = filterContours(contours, input, tar);
 
 	std::cout <<"processimg: after filter contours" << std::endl;
@@ -32,13 +32,13 @@ Target* TargetDetector::processImage(Mat input, bool tar) {
         //std::cout << "Null" << std::endl;
         return NULL;
     }*/
-   
+
     std::cout << "processimg: before contour size check" << std::endl;
     std::cout << finalContour.size() << std::endl;
     std::cout << "processimg: after contour size check" << std::endl;
 
     if(finalContour.size() == 0)
-    {   
+    {
 	return NULL;
     }
     else {
@@ -51,7 +51,7 @@ Target* TargetDetector::processImage(Mat input, bool tar) {
 }
 
 Mat TargetDetector::canny(Mat input) {
-    Canny(input, input, 0, 20, 3);
+    Canny(input, input, 0, 25, 3,false);
     return input;
 }
 
@@ -71,7 +71,7 @@ Mat TargetDetector::thresholdImage(Mat input, int minHue, int maxHue, int minVal
     std::vector<cv::Mat> separated(3);
     cv::split(cvted, separated);
     Mat hue = separated.at(0).clone();
-    Mat sat = separated.at(1).clone();
+    //Mat sat = separated.at(1).clone();
     Mat val = separated.at(2).clone();
 
     //Hue
@@ -97,7 +97,7 @@ Mat TargetDetector::thresholdImage(Mat input, int minHue, int maxHue, int minVal
 std::vector<std::vector<Point> > TargetDetector::contour(Mat input) {
     std::vector<std::vector<Point> > contours;
 
-    findContours(input, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+    findContours(input, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE, Point(0,0));
     return contours;
 }
 
@@ -113,7 +113,7 @@ std::vector<Point> TargetDetector::arcCheck1(std::vector<Point> input)
 {
   double max = input[0].x;
   double min = input[0].x;
-	
+
   double maxRY = 0;
   double minRY = 1000;
   double maxLY = 0;
@@ -131,7 +131,7 @@ std::vector<Point> TargetDetector::arcCheck1(std::vector<Point> input)
       min = input[i].x;
     }
   }
-	
+
   std::cout << "arccheck : determined min and max " << std::endl;
   std::cout << "arccheck : min: " << min << "max: " << max << std::endl;
 
@@ -175,7 +175,7 @@ std::cout << "arccheck: before returning output in boiler check " << std::endl;
     return output;
   }
   else
-  { 
+  {
     std::cout << "arccheck : returning empty" << std::endl;
     return std::vector<cv::Point>();
   }
@@ -190,10 +190,10 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
     std::vector<std::vector<cv::Point> > gearVector;
     std::vector<std::vector<cv::Point> > boilerVector;
 
-    int tarNum = 0;	
+//    int tarNum = 0;
     std::cout << "filtercontour : before boiler check" << std::endl;
     if (tar == false)
-    { 
+    {
         std::cout << "filtercontour : tar is false(boiler)"<< std::endl;
 	for(int j = 0; j< contours.size(); j++)
         {
@@ -203,11 +203,11 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
 	    std::cout << arcContour.size() << std::endl;
             if(arcContour.size() > 0)
             {
-                approxPolyDP(arcContour, outputContour, (cv::arcLength(cv::Mat(contours.at(j)), true) * 0.01), true);    
+                approxPolyDP(arcContour, outputContour, (cv::arcLength(cv::Mat(contours.at(j)), true) * 0.01), true);
                 boilerVector.push_back(outputContour);
-  		std::cout << "filtercontour: after push back boiler " << std::endl; 
+  		std::cout << "filtercontour: after push back boiler " << std::endl;
             }
-	    
+
  	    std::cout << "filtercontour: after boiler approxPoly" <<std::endl;
             int maxArea = 0;
             int index = 0;
@@ -217,14 +217,14 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
 		std::cout << "filtercontour: in boilerVector area check " << std::endl;
                 if(contourArea(boilerVector[i]) > maxArea)
                 {
-                    maxArea = contourArea(boilerVector[i]);    
+                    maxArea = contourArea(boilerVector[i]);
                     index = i;
                 }
 		std::cout << "filtercontour: after boilerVecotr area check " <<std::endl;
             }
-	    
-	    std::cout << "after areacheck" << std::endl; 
-	    
+
+	    std::cout << "after areacheck" << std::endl;
+
   	    if(boilerVector.size() > 0)
 	    {
  	        std::vector<std::vector<cv::Point> > returnVector;
@@ -233,13 +233,13 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
   	        return returnVector;
 	    }
 	}
-} 
+}
     else
     {
-	std::cout << "filtercontour: before gear detection " << std::endl; 
+	std::cout << "filtercontour: before gear detection " << std::endl;
         for(int j = 0; j < contours.size(); j++)
         {
-            approxPolyDP(contours[j], outputContour, (cv::arcLength(cv::Mat(contours.at(j)), true) * 0.01), true);
+            approxPolyDP(contours[j], outputContour, (cv::arcLength(cv::Mat(contours.at(j)), true) * 0.02), true);
             if (contourArea(outputContour) > 100 && outputContour.size() == 4)
             {
                 double maxCosine = 0;
@@ -255,49 +255,68 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
                     maxCosine = MAX(maxCosine, cosine);
                 }
             //filters out contours that don't have only 90deg anlges
-                if(maxCosine < .2)
+                bool duplicate = false;
+                if(maxCosine < .5)
                 {
-                    gearVector.push_back(outputContour);
+                    Target tempTwo(outputContour);
+                    for(int i = 0; i < gearVector.size(); i++)
+                    {
+                        Target tempOne(gearVector[i]);
+                        if(abs(tempOne.getCenter().x - tempTwo.getCenter().x) < 7 ) //add area check
+                        {
+                            duplicate = true;
+                        }
+
+                    }
+
+                    if(duplicate == false)
+                    {
+                        gearVector.push_back(outputContour);
+                    }
                 }
             }
 		}
-		
-				Scalar color(255,0,0);
-                cv::drawContours(img, gearVector, -1, color, 10);
+
+				//Scalar color(255,0,0);
+                //cv::drawContours(img, gearVector, -1, color, 10);
                 for(int j = 0; j < gearVector.size(); j++)
                 {
                 	Target temp(gearVector[j]);
-                	std::cout << "center of gear vector index " << j << " = " << temp.getCenter() << std::endl; 
+                	std::cout << "center of gear vector index " << j << " = " << temp.getCenter() << std::endl;
                 }
-		
+
 			std::cout << "before for loop gear Vector size : " << gearVector.size() << std::endl;
 	    	for( int i = 0; i < gearVector.size(); i++)
             {
-            
-            	std::cout << "new i : " << i << std::endl;
-            	std::cout << " gearVecotr size " << gearVector.size() << std::endl; 
-           
 
-            	
+            	std::cout << "new i : " << i << std::endl;
+            	std::cout << " gearVector size " << gearVector.size() << std::endl;
+
+
+
                 Target* tempOne = new Target(gearVector[i]);
                 for(int k = i+1; k < gearVector.size(); k++)
                 {
-                	 std::cout << "i : " << i << "k : " << k << std::endl; 
+                	 std::cout << "i : " << i << "k : " << k << std::endl;
                      Target* tempTwo = new Target(gearVector[k]);
-						
-					double val = cv::matchShapes(gearVector[i], gearVector[k], CV_CONTOURS_MATCH_I1, 0);	
-						
+
+					double val = cv::matchShapes(gearVector[i], gearVector[k], CV_CONTOURS_MATCH_I1, 0);
+                    std::cout << " val: " << val << std::endl;
                     if(val < 0.2)
                     {
                         std::vector<std::vector<cv::Point> > returnVector;
-                        
-                        
-                        
-                        std::cout << "val : " << val << std::endl;
-                        
-                        returnVector.push_back(gearVector[i]);
-                        returnVector.push_back(gearVector[k]);
-                        
+
+                        if(tempOne->getCenter().x < tempTwo->getCenter().x)
+                        {
+                            returnVector.push_back(gearVector[i]);
+                            returnVector.push_back(gearVector[k]);
+                        }
+                        else
+                        {
+                            returnVector.push_back(gearVector[k]);
+                            returnVector.push_back(gearVector[i]);
+                        }
+
                         Scalar color(255,0,0);
                         cv::drawContours(img, returnVector, -1, color, 10);
                         std::cout << "found gear: " << std::endl;
@@ -305,11 +324,11 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
                         std::cout << "target two center : " << tempTwo->getCenter() << std::endl;
                         return returnVector;
                     }
-                }   
+                }
             }
-        
+
     }
-  
+
     /*Scalar color(255,0,0);
     Scalar color2(0,0,255);
     cv::drawContours(img, gearVector, -1, color, 10);
