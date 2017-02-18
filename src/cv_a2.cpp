@@ -18,7 +18,7 @@ int main(){
     VideoDevice* cap = new VideoDevice();
 	
     //int dev = atoi(argv[1]);
-    cap -> startCapture(1);
+    cap -> startCapture(0);
 
 
     cv::Mat rawImg;

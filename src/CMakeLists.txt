@@ -8,8 +8,8 @@ find_package(Boost REQUIRED COMPONENTS system thread)
 add_executable(cv_a2 cv_a2.cpp TargetDetector.cpp Target.cpp TargetProcessor.cpp VideoDevice.cpp)
 target_link_libraries(cv_a2 ${OpenCV_LIBS})
 
-add_executable(rectTest rectTest.cpp VideoDevice.cpp Target.cpp TargetProcessor.cpp TargetDetector.cpp )
-target_link_libraries(rectTest ${OpenCV_LIBS})
+#add_executable(rectTest rectTest.cpp VideoDevice.cpp Target.cpp TargetProcessor.cpp TargetDetector.cpp )
+#target_link_libraries(rectTest ${OpenCV_LIBS})
 
 #add_executable(cv_b cv_b.cpp NetworkController.cpp AppConfig.cpp CmdLineInterface.cpp GUIManager.cpp)
 #target_link_libraries(cv_b ${OpenCV_LIBS} ${Boost_LIBRARIES})

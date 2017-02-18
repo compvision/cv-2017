@@ -291,9 +291,6 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
 
             	std::cout << "new i : " << i << std::endl;
             	std::cout << " gearVector size " << gearVector.size() << std::endl;
-
-
-
                 Target* tempOne = new Target(gearVector[i]);
                 for(int k = i+1; k < gearVector.size(); k++)
                 {
@@ -302,7 +299,7 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
 
 					double val = cv::matchShapes(gearVector[i], gearVector[k], CV_CONTOURS_MATCH_I1, 0);
                     std::cout << " val: " << val << std::endl;
-                    if(val < 0.2)
+                    if((val < 0.26)  || abs(tempTwo->getCenter().y - tempOne->getCenter().y) < 24     )
                     {
                         std::vector<std::vector<cv::Point> > returnVector;
 
