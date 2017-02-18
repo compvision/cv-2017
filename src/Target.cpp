@@ -13,8 +13,8 @@ Target::Target(std::vector<std::vector<cv::Point> > contour)
     }
     else
     {
-        edgeL = contour[0];
-        edgeR = contour[0];
+       edgeL = contour[0];
+       edgeR = contour[0];
     }
 
     //splits the inputted vector into two shapes again
@@ -44,7 +44,7 @@ double Target::getWidth()
 
 //True if Gears, False if Boilers
 bool Target::getType() {
-  if (edgeL != edgeR) {
+  if (getHeight() > getWidth()) {
     return true;
   }
 if (getHeight() < getWidth()) {
