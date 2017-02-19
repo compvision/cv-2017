@@ -29,4 +29,7 @@
 *.app
 
 build/*
+build2/*
 src/build/*
+*.swp*
+
