@@ -191,47 +191,58 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
     std::vector<std::vector<cv::Point> > boilerVector;
 
 //    int tarNum = 0;
-    std::cout << "filtercontour : before boiler check" << std::endl;
     if (tar == false)
     {
-        std::cout << "filtercontour : tar is false(boiler)"<< std::endl;
         for(int j = 0; j< contours.size(); j++)
         {
-            std::cout << "filtercontour : before arc check " << j << std::endl;
-            arcContour = arcCheck1(contours[j]);
-            std::cout <<"filtercontour: after arc check " << j << std::endl;
-            std::cout << arcContour.size() << std::endl;
-            if(arcContour.size() > 0)
-            {
-                approxPolyDP(arcContour, outputContour, (cv::arcLength(cv::Mat(contours.at(j)), true) * 0.01), true);
-                boilerVector.push_back(outputContour);
-                std::cout << "filtercontour: after push back boiler " << std::endl;
-            }
+            cv::RotatedRect rect = cv::minAreaRect(contour[j])
+			std::vector<cv::Point> corners(4);
+			rect.points(corners);
 
-            std::cout << "filtercontour: after boiler approxPoly" <<std::endl;
-            int maxArea = 0;
-            int index = 0;
+			if( abs(rect.angle) < 5)
+			{
+				boilerVector.push_back(corners);
+			}  
+		}
 
-            for(int i = 0; i < boilerVector.size(); i++)
-            {
-                std::cout << "filtercontour: in boilerVector area check " << std::endl;
-                if(contourArea(boilerVector[i]) > maxArea)
-                {
-                    maxArea = contourArea(boilerVector[i]);
-                    index = i;
-                }
-                std::cout << "filtercontour: after boilerVecotr area check " <<std::endl;
-            }
+		Scalar color(255,0,0);
+	    cv::drawContours(img, boilerVector, -1, color, 10);
+		            	
+            
+		if(boilerVector.size() > 0)
+        {
+			for(int i = 0; i < boilerVector.size(); i++)
+			{
+				Target tempOne(boilerVector[i]);
+				for(int j = i+1; j < boilerVector.size(); j++)
+				{
+					Target tempTwo(boilerVector[j]);
 
-            std::cout << "after areacheck" << std::endl;
+					if(abs(tempOne.getCenter().x < tempTwo.getCenter().x) < 20 && abs(tempOne.getWidth()-tempTwo.getWidth()) < 30 )
+					{
+						std::vector<std::vector<cv::Point> > returnVector;
 
-            if(boilerVector.size() > 0)
-            {
-                std::vector<std::vector<cv::Point> > returnVector;
-                returnVector.push_back(boilerVector[index]);
-                std::cout << "filtercontour : before returnVector for boiler " << std::endl;
-                return returnVector;
-            }
+                		if(tempOne.getCenter().x < tempTwo.getCenter().x)
+                		{
+		                	returnVector.push_back(gearVector[i]);
+		                	returnVector.push_back(gearVector[j]);
+		            	}
+		            	else
+		            	{
+		                	returnVector.push_back(gearVector[j]);
+		                	returnVector.push_back(gearVector[i]);
+		            	}
+
+		            	//Scalar color(255,0,0);
+		            	//cv::drawContours(img, returnVector, -1, color, 10);
+		            	std::cout << "found boiler: " << std::endl;
+		            	std::cout << "target one center : " << tempOne.getCenter() << std::endl;
+		            	std::cout << "target two center : " << tempTwo.getCenter() << std::endl;
+		            	return returnVector;
+										
+					} 
+				}	
+			}		
         }
     }
     else

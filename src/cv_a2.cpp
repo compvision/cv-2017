@@ -28,7 +28,7 @@ int main(){
 
 	rawImg = cap -> getImage();
 
-        Target* t = detector->processImage(rawImg, true);
+        Target* t = detector->processImage(rawImg, false);
 
         cv::imshow("Data", rawImg);
 
