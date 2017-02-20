@@ -194,11 +194,13 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
     if (tar == false)
     {
         for(int j = 0; j< contours.size(); j++)
-        {
-            cv::RotatedRect rect = cv::minAreaRect(contour[j])
-			std::vector<cv::Point> corners(4);
-			rect.points(corners);
+        {			
 
+            cv::RotatedRect rect = cv::minAreaRect(cv::Mat(contours[j]));
+			//std::vector<cv::Point> corners(4);
+			cv::Point2f corners(4);			
+			rect.points(corners);
+			
 			if( abs(rect.angle) < 5)
 			{
 				boilerVector.push_back(corners);
