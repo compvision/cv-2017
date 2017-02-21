@@ -12,10 +12,12 @@ Target* TargetDetector::processImage(Mat input, bool tar) {
     GaussianBlur(input,input,Size(3,3),31);
     //input = canny(thresholdImage(input,53,58,228,238));
     input = thresholdImage(input,53,58,228,238);
-   //imshow("Threshold", input);
+    //imshow("Threshold", input);
     input = canny(input);
-   //imshow("Canny", input);
+    //imshow("Canny", input);
     dilate(input, input, Mat());
+
+	std::cout << "input size: " << input.size().width << " " << input.size().height << std::endl;
 
     std::vector<std::vector<Point> > contours = contour(input);
     // std::cout << "not contours" << std::endl;
@@ -25,7 +27,7 @@ Target* TargetDetector::processImage(Mat input, bool tar) {
     std::cout <<"processimg: after filter contours" << std::endl;
 
 
-   // imshow("Contours",input);
+    //imshow("Contours",input);
     std::cout << "processimg: imshowed" << std::endl;
 
     /* if (&finalContour[0] == NULL || &finalContour[1] == NULL) {
@@ -271,14 +273,15 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
 
                     if(duplicate == false && (tempTwo.getWidth() < tempTwo.getHeight() ))
                     {
-                        gearVector.push_back(outputContour);
+						if(tempTwo.getHeight()/tempTwo.getWidth() < 3.3 && tempTwo.getHeight()/tempTwo.getWidth() > 1.7)
+                        	gearVector.push_back(outputContour);
                     }
                 }
             }
         }
 
-        //Scalar color(255,0,0);
-        //cv::drawContours(img, gearVector, -1, color, 10);
+       // Scalar color(255,0,0);
+      //  cv::drawContours(img, gearVector, -1, color, 10);
         for(int j = 0; j < gearVector.size(); j++)
         {
             Target temp(gearVector[j]);
@@ -318,7 +321,7 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
             std::cout << "min Val: " << minVal << std::endl;
             Target* tempOne = new Target(gearVector[minI]);
             Target* tempTwo = new Target(gearVector[minK]);
-            if(minVal < 0.3 && abs(tempTwo->getCenter().y - tempOne->getCenter().y) < 50)
+            if(minVal < 0.5 && abs(tempTwo->getCenter().y - tempOne->getCenter().y) < 40)
             {
                 std::vector<std::vector<cv::Point> > returnVector;
 
@@ -333,8 +336,8 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
                     returnVector.push_back(gearVector[minI]);
                 }
 
-              //  Scalar color(255,0,0);
-              //  cv::drawContours(img, returnVector, -1, color, 10);
+                Scalar color(255,0,0);
+                cv::drawContours(img, returnVector, -1, color, 10);
                 std::cout << "found gear: " << std::endl;
                 std::cout << "target one center : " << tempOne->getCenter() << std::endl;
                 std::cout << "target two center : " << tempTwo->getCenter() << std::endl;
