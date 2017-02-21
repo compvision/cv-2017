@@ -9,7 +9,8 @@ using namespace std;
 
 double Altitude, Azimuth, Distance;
 
-int main(){
+int main(int argc, char *argv[])
+{
 
     TargetProcessor* processor = new TargetProcessor();
     TargetDetector* detector = new TargetDetector();
@@ -17,8 +18,8 @@ int main(){
 
     VideoDevice* cap = new VideoDevice();
 	
-    //int dev = atoi(argv[1]);
-    cap -> startCapture(0);
+    int dev = atoi(argv[1]);
+    cap -> startCapture(dev);
 
 
     cv::Mat rawImg;
@@ -29,7 +30,6 @@ int main(){
 	rawImg = cap -> getImage();
 
         Target* t = detector->processImage(rawImg, false);
-
         cv::imshow("Data", rawImg);
 
 

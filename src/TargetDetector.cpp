@@ -188,7 +188,7 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
     std::vector<cv::Point> outputContour;
 
     std::vector<std::vector<cv::Point> > gearVector;
-    std::vector<std::vector<cv::Point> > boilerVector;
+    std::vector<std::vector<cv::Point> > boilerVector(0);
 
 //    int tarNum = 0;
     if (tar == false)
@@ -198,41 +198,58 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
 
             cv::RotatedRect rect = cv::minAreaRect(cv::Mat(contours[j]));
 			//std::vector<cv::Point> corners(4);
-			cv::Point2f corners(4);			
+			cv::Point2f corners[4];			
 			rect.points(corners);
+
+            std::cout << " corners " << sizeof(corners) << std::endl;
+            std::vector<cv::Point> cornersInt(0);
+            for(int i = 0 ; i < sizeof(corners); i++)
+            {
+                std::cout << "corners at " << i << ": " << corners[i] << std::endl;
+                cv::Point point((int)corners[i].x, (int)corners[i].y);
+                cornersInt.push_back(point);
+            }    
 			
 			if( abs(rect.angle) < 5)
 			{
-				boilerVector.push_back(corners);
+                std::cout << "found target" << std::endl;
+				boilerVector.push_back(cornersInt);
 			}  
 		}
 
+        std::cout << "about to check boilerVector size" << std::endl;
+        std::cout << "boiler vector size " << sizeof(boilerVector) << std::endl;
 		Scalar color(255,0,0);
+        std::cout << "about to draw contours" << std::endl;
 	    cv::drawContours(img, boilerVector, -1, color, 10);
-		            	
+		std::cout << "drew contours " << std::endl;            	
             
 		if(boilerVector.size() > 0)
         {
 			for(int i = 0; i < boilerVector.size(); i++)
 			{
+                std::cout << "i : " << i << std::endl;
 				Target tempOne(boilerVector[i]);
 				for(int j = i+1; j < boilerVector.size(); j++)
 				{
+                    std::cout << "j: " << j << std::endl;
 					Target tempTwo(boilerVector[j]);
 
 					if(abs(tempOne.getCenter().x < tempTwo.getCenter().x) < 20 && abs(tempOne.getWidth()-tempTwo.getWidth()) < 30 )
 					{
+                        std::cout << "passed the center checks" << std::endl;
 						std::vector<std::vector<cv::Point> > returnVector;
+                        
 
                 		if(tempOne.getCenter().x < tempTwo.getCenter().x)
                 		{
-		                	returnVector.push_back(gearVector[i]);
-		                	returnVector.push_back(gearVector[j]);
+		                	returnVector.push_back(boilerVector[i]);
+		                	returnVector.push_back(boilerVector[j]);
 		            	}
 		            	else
 		            	{
-		                	returnVector.push_back(gearVector[j]);
-		                	returnVector.push_back(gearVector[i]);
+		                	returnVector.push_back(boilerVector[j]);
+		                	returnVector.push_back(boilerVector[i]);
 		            	}
 
 		            	//Scalar color(255,0,0);
