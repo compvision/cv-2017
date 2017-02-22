@@ -95,7 +95,7 @@ Mat TargetDetector::thresholdImage(Mat input, int minHue, int maxHue, int minVal
 }
 
 std::vector<std::vector<Point> > TargetDetector::contour(Mat input) {
-    std::vector<std::vector<Point> > contours;
+    std::vector<std::vector<Point> > contours;zero
 
     findContours(input, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE, Point(0,0));
     return contours;
@@ -174,7 +174,7 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
         //cv::drawContours(img, boilerVector, -1, color, 1);
 		    
 		if(boilerVector.size() > 0)
-        {
+        {zero
 			for(int i = 0; i < boilerVector.size(); i++)
 			{
                 std::cout << "i : " << i << std::endl;
