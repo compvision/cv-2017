@@ -44,11 +44,13 @@ int main(int argc, char* argv[]){
     cv::Mat gearImage, boilerImage;
 
     int loop = 1;
-    cv::namedWindow("Live Gear Feed", cv::WINDOW_NORMAL);
-    cv::namedWindow("Live Boiler Feed", cv::WINDOW_NORMAL);
-    cv::namedWindow("General", cv::WINDOW_NORMAL);
-    cv::namedWindow("Gear Contours", cv::WINDOW_NORMAL);
-    cv::namedWindow("Boiler Contours", cv::WINDOW_NORMAL);
+    if (!config.getIsHeadless()){
+        cv::namedWindow("Live Gear Feed", cv::WINDOW_NORMAL);
+        cv::namedWindow("Live Boiler Feed", cv::WINDOW_NORMAL);
+        cv::namedWindow("General", cv::WINDOW_NORMAL);
+        cv::namedWindow("Gear Contours", cv::WINDOW_NORMAL);
+        cv::namedWindow("Boiler Contours", cv::WINDOW_NORMAL);
+    }
 
     while(cv::waitKey(30) != 27){
         cv::Mat background(Size(1000,1000), CV_8UC1, Scalar(255, 255, 255 ));
@@ -140,21 +142,21 @@ int main(int argc, char* argv[]){
                 std::string dis = "distance (Gear): " + patch::to_string(gearDistance);
                 std::string alt = "altitude (Gear): " + patch::to_string(gearAltitude);
                 std::string azi = "azimuth (Gear): " + patch::to_string(gearAzimuth);
+                if (!config.getIsHeadless()){
+                    cv::putText(background, dis, cv::Point(50,100),
+                                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
+                                1);
 
-                cv::putText(background, dis, cv::Point(50,100),
-                            cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
-                            1);
+                    cv::putText(background, alt, cv::Point(50,200),
+                                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
+                                1);
 
-                cv::putText(background, alt, cv::Point(50,200),
-                            cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
-                            1);
-
-                cv::putText(background, azi, cv::Point(50,300),
-                            cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
-                            1);
-                //for background
-                imshow("General", background);
-
+                    cv::putText(background, azi, cv::Point(50,300),
+                                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),
+                                1);
+                    //for background
+                    imshow("General", background);
+                }
                 std::string zero = "0;0;0;";
                 if (config.getIsNetworking()){
                     msg.append("true;false;" +
@@ -205,16 +207,16 @@ int main(int argc, char* argv[]){
                 std::string dis = "Distance (Boiler): " + patch::to_string(boilerDistance);
                 std::string alt = "Altitude (Boiler): " + patch::to_string(boilerAltitude);
                 std::string azi = "Azimuth (Boiler): " + patch::to_string(boilerAzimuth);
-
-                cv::putText(background, dis, cv::Point(50,400),
-                            cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
-                cv::putText(background, alt, cv::Point(50,500),
-                            cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
-                cv::putText(background, azi, cv::Point(50,600),
-                            cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
-                // for background
-                imshow("General", background);
-
+                if (!config.getIsHeadless()){
+                    cv::putText(background, dis, cv::Point(50,400),
+                                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
+                    cv::putText(background, alt, cv::Point(50,500),
+                                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
+                    cv::putText(background, azi, cv::Point(50,600),
+                                cv::FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0, 255, 0),1);
+                    // for background
+                    imshow("General", background);
+                }
                 if (config.getIsNetworking()){
                     msg.append("false;true;0;0;0;" +
                                boost::lexical_cast<std::string> (boilerDistance) + ";" +
@@ -240,8 +242,10 @@ int main(int argc, char* argv[]){
         }
         GaussianBlur(gearImage, gearImage,Size(3,3),31);
         GaussianBlur(boilerImage, boilerImage,Size(3,3),31);
-        imshow("Live Gear Feed", gearImage);
-        imshow("Live Boiler Feed", boilerImage);
+        if (!config.getIsHeadless()){
+            imshow("Live Gear Feed", gearImage);
+            imshow("Live Boiler Feed", boilerImage);
+        }
         loop++;
         delete gearTarget;
         delete boilerTarget;
