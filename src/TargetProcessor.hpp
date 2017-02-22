@@ -9,9 +9,7 @@ class TargetProcessor
 public:
     TargetProcessor();
     void loadTarget(Target* target);
-
     void temporaryGetPoints(int width, int height, cv::Point center);
-
     double calculateDistance();
     double calculateAzimuth();
     double calculateAltitude();
@@ -31,7 +29,7 @@ private:
     //center vertical point
     bool Tar;
 
-
+    
 };
 
 #endif

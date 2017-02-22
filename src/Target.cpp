@@ -6,20 +6,25 @@
 
 Target::Target(std::vector<std::vector<cv::Point> > contour)
 {
-    if(contour.size() > 1) 
+    if(contour.size() > 1)
     {
         edgeL = contour[0];
         edgeR = contour[1];
     }
     else
     {
-        edgeL = contour[0];
-        edgeR = contour[0];
+       edgeL = contour[0];
+       edgeR = contour[0];
     }
 
     //splits the inputted vector into two shapes again
 }
 
+Target::Target(std::vector<cv::Point> contour)
+{
+    edgeL = contour;
+    edgeR = contour;
+}
 
 void Target::setTar(bool tar) {
 
@@ -44,12 +49,12 @@ double Target::getWidth()
 
 //True if Gears, False if Boilers
 bool Target::getType() {
-    if (edgeL != edgeR) {
-        return true;
-    }
-    if (getHeight() < getWidth()) {
-        return false;
-    }
+  if (getHeight() > getWidth()) {
+    return true;
+  }
+if (getHeight() < getWidth()) {
+    return false;
+  }
 }
 
 /*
