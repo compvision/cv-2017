@@ -4,12 +4,14 @@
 #include "AppConfig.hpp"
 
 AppConfig::AppConfig() :
-    deviceID(0),
-    isFile(0),
-    isDevice(0),
-    isHeadless(0),
-    isNetworking(1),
-    isDebug(0)
+gearDeviceID(0),
+boilerDeviceID(0),
+isFile(0),
+isGearDevice(0),
+isBoilerDevice(0),
+isHeadless(0),
+isNetworking(1),
+isDebug(0)
 {
 }
 
@@ -19,9 +21,14 @@ std::string AppConfig::getFileName()
     return fileName;
 }
 
-int AppConfig::getDeviceID()
+int AppConfig::getGearDeviceID()
 {
-    return deviceID;
+    return gearDeviceID;
+}
+
+int AppConfig::getBoilerDeviceID()
+{
+    return boilerDeviceID;
 }
 
 int AppConfig::getIsFile()
@@ -29,9 +36,14 @@ int AppConfig::getIsFile()
     return isFile;
 }
 
-int AppConfig::getIsDevice()
+int AppConfig::getIsGearDevice()
 {
-    return isDevice;
+    return isGearDevice;
+}
+
+int AppConfig::getIsBoilerDevice()
+{
+    return isBoilerDevice;
 }
 
 int AppConfig::getIsHeadless()
@@ -55,9 +67,14 @@ void AppConfig::setFileName(std::string inputFileName)
     fileName = inputFileName;
 }
 
-void AppConfig::setDeviceID(int inputDeviceID)
+void AppConfig::setGearDeviceID(int inputDeviceID)
 {
-    deviceID = inputDeviceID;
+    gearDeviceID = inputDeviceID;
+}
+
+void AppConfig::setBoilerDeviceID(int inputDeviceID)
+{
+    boilerDeviceID = inputDeviceID;
 }
 
 void AppConfig::setIsFile(int inputIsFile)
@@ -65,9 +82,14 @@ void AppConfig::setIsFile(int inputIsFile)
     isFile = inputIsFile;
 }
 
-void AppConfig::setIsDevice(int inputIsDevice)
+void AppConfig::setIsGearDevice(int inputIsDevice)
 {
-    isDevice = inputIsDevice;
+    isGearDevice = inputIsDevice;
+}
+
+void AppConfig::setIsBoilerDevice(int inputIsDevice)
+{
+    isBoilerDevice = inputIsDevice;
 }
 
 void AppConfig::setIsHeadless(int inputIsHeadless)
