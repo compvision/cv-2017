@@ -214,7 +214,7 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
             }    
 			
 			Target tempOne(cornersInt);
-			if( abs(rect.angle) < 15)
+			if( rect.angle< 19)
 			{
 				if(tempOne.getWidth() > tempOne.getHeight() && contourArea(cornersInt) > 250)
 				{
