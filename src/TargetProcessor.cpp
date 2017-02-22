@@ -4,8 +4,8 @@
 
 TargetProcessor::TargetProcessor()
 {
-    GearWidth = 0.270; //meters
-    BoilerWidth = 0.400; // Cjq-0fjekkom
+    GearWidth = 0.260; //meters
+    BoilerWidth = 0.381;
     focalLength = 700; //varies by camera
     horizCenter = 320; //aslo varies by camera (center horizontal point on video)
     vertCenter = 240; //center vertical point on video

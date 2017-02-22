@@ -28,22 +28,28 @@ class NTable
             NetworkTable.setIPAddress("roboRIO-3341-FRC.local");
             NetworkTable table = NetworkTable.getTable("cv");
             //Main loop
+            String targetDataRaw = null;
             while(true)
             {
                 //send the value request
                 out.write('\n');
 
                 //grab the values
+                
                 Thread.sleep(100); // Update values every 100 ms
-                String targetDataRaw = null;
-                targetDataRaw = in.readLine();
-
+                System.out.print("ping\n"); 
+				//System.out.print(in.readLine()+"\n");
+                
+				targetDataRaw = in.readLine();
+                System.out.print("waiting\n");
                 if(targetDataRaw == null)
-                    break;
+                    //break;
+                    continue;
                 if(targetDataRaw.isEmpty())
                     continue;
 
                 // Implements the FRC 2015 Network Tables Protocol
+                System.out.print(targetDataRaw + "\n");
                 boolean Gear, Boiler;
                 double gearDistance = 0, gearAzimuth = 0, gearAltitude = 0, boilerDistance = 0, boilerAzimuth = 0, boilerAltitude = 0;
                 String[] parsed = targetDataRaw.split(";"); 

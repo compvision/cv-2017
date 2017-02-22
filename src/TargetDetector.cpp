@@ -12,12 +12,10 @@ Target* TargetDetector::processImage(Mat input, bool tar) {
     GaussianBlur(input,input,Size(3,3),31);
     //input = canny(thresholdImage(input,53,58,228,238));
     input = thresholdImage(input,53,58,228,238);
-    //imshow("Threshold", input);
+    imshow("Threshold", input);
     input = canny(input);
     //imshow("Canny", input);
     dilate(input, input, Mat());
-
-	std::cout << "input size: " << input.size().width << " " << input.size().height << std::endl;
 
     std::vector<std::vector<Point> > contours = contour(input);
     // std::cout << "not contours" << std::endl;
@@ -27,7 +25,7 @@ Target* TargetDetector::processImage(Mat input, bool tar) {
     std::cout <<"processimg: after filter contours" << std::endl;
 
 
-    //imshow("Contours",input);
+    imshow("Contours",input);
     std::cout << "processimg: imshowed" << std::endl;
 
     /* if (&finalContour[0] == NULL || &finalContour[1] == NULL) {
@@ -111,78 +109,6 @@ double TargetDetector::angle(cv::Point p1, cv::Point p2, cv::Point p0) {
     return atan(dy1/dx1)-atan(dy2/dx2); //in rad
 }
 
-std::vector<Point> TargetDetector::arcCheck1(std::vector<Point> input)
-{
-    double max = input[0].x;
-    double min = input[0].x;
-
-    double maxRY = 0;
-    double minRY = 1000;
-    double maxLY = 0;
-    double minLY = 1000;
-    std::vector<cv::Point> output;
-
-    for (int i = 0; i < input.size(); i++)
-    {
-        if (input[i].x > max)
-        {
-            max = input[i].x;
-        }
-        else if (input[i].x < min)
-        {
-            min = input[i].x;
-        }
-    }
-
-    std::cout << "arccheck : determined min and max " << std::endl;
-    std::cout << "arccheck : min: " << min << "max: " << max << std::endl;
-
-    //cv::Point newPt(0,0);
-    for (int i = 0; i < input.size(); i++)
-    {
-        if (input[i].x > max - 7 && input[i].x < max + 7)
-        {
-            //newPt = input[i];
-            if(input[i].y < minRY)
-            {
-                minRY = input[i].y;
-            }
-            else if(input[i].y > maxRY)
-            {
-                maxRY = input[i].y;
-            }
-            output.push_back(input[i]);
-        }
-        else if (input[i].x > min - 7 && input[i].x < min + 7)
-        {
-            //newPt = input[i];
-            if(input[i].y < minLY)
-            {
-                minLY = input[i].y;
-            }
-            else if(input[i].y > maxLY)
-            {
-                maxLY = input[i].y;
-            }
-            output.push_back(input[i]);
-        }
-
-    }
-    std::cout << "arccheck: before returning output in boiler check " << std::endl;
-    int diff = maxRY-minRY;
-    int diff2 = maxLY - minLY;
-    if( output.size() > 0 && (diff - diff2 < 20))
-    {
-        std::cout << "arccheck : returning output" << std::endl;
-        return output;
-    }
-    else
-    {
-        std::cout << "arccheck : returning empty" << std::endl;
-        return std::vector<cv::Point>();
-    }
-}
-
 std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std::vector<Point> > contours, cv::Mat img, bool tar)
 {
     //bool tar: true = gears, false = boiler
@@ -193,47 +119,98 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
     std::vector<std::vector<cv::Point> > boilerVector;
 
 //    int tarNum = 0;
-    std::cout << "filtercontour : before boiler check" << std::endl;
     if (tar == false)
     {
-        std::cout << "filtercontour : tar is false(boiler)"<< std::endl;
-        for(int j = 0; j< contours.size(); j++)
+		int maxArea = 0;	
+		for(int j = 0; j< contours.size(); j++)
+        {	
+		
+			//Scalar color(255,0,0);
+      		//cv::drawContours(img, contours, -1, color, 1);
+            cv::RotatedRect rect = cv::minAreaRect(contours[j]);
+			//std::vector<cv::Point> corners(4);
+			cv::Point2f corners[4];			
+			rect.points(corners);
+
+            std::cout << " corners " << sizeof(corners) << std::endl;
+            std::vector<cv::Point> cornersInt;
+            for(int i = 0 ; i < 4; i++)
+            {
+             //   std::cout << "corners at " << i << ": " << corners[i] << std::endl;
+                cv::Point point((int)corners[i].x, (int)corners[i].y);
+                cornersInt.push_back(point);
+            }    
+			
+			Target tempOne(cornersInt);
+			if( rect.angle < 23)
+			{
+				if(tempOne.getWidth() > tempOne.getHeight() && contourArea(cornersInt) > 250)
+				{
+					if(tempOne.getHeight()/tempOne.getWidth() < 0.45  && tempOne.getHeight()/tempOne.getWidth() > 0.1) 		
+					{
+	                	std::cout << "found target" << std::endl;
+						bool duplicate = false;					
+						for(int j = 0; j < boilerVector.size(); j++)
+	                    {
+	                        Target tempTwo(boilerVector[j]);
+	                        if(abs(tempOne.getCenter().x - tempTwo.getCenter().x) < 7 && abs(tempOne.getCenter().y - tempTwo.getCenter().y) < 7 ) //add 	area check
+	                        {
+	                            duplicate = true;
+	                        }
+	
+	                    }
+						if(duplicate == false)
+	                    {           
+							boilerVector.push_back(cornersInt);
+						}
+					}
+                    
+				}	
+			}  
+		}
+
+        std::cout << "boiler vector size " << sizeof(boilerVector) << std::endl;
+		//Scalar color(255,0,0);
+        //cv::drawContours(img, boilerVector, -1, color, 1);
+		    
+		if(boilerVector.size() > 0)
         {
-            std::cout << "filtercontour : before arc check " << j << std::endl;
-            arcContour = arcCheck1(contours[j]);
-            std::cout <<"filtercontour: after arc check " << j << std::endl;
-            std::cout << arcContour.size() << std::endl;
-            if(arcContour.size() > 0)
-            {
-                approxPolyDP(arcContour, outputContour, (cv::arcLength(cv::Mat(contours.at(j)), true) * 0.01), true);
-                boilerVector.push_back(outputContour);
-                std::cout << "filtercontour: after push back boiler " << std::endl;
-            }
+			for(int i = 0; i < boilerVector.size(); i++)
+			{
+                std::cout << "i : " << i << std::endl;
+				Target tempOne(boilerVector[i]);
+				for(int j = i+1; j < boilerVector.size(); j++)
+				{
+                    std::cout << "j: " << j << std::endl;
+					Target tempTwo(boilerVector[j]);
 
-            std::cout << "filtercontour: after boiler approxPoly" <<std::endl;
-            int maxArea = 0;
-            int index = 0;
-
-            for(int i = 0; i < boilerVector.size(); i++)
-            {
-                std::cout << "filtercontour: in boilerVector area check " << std::endl;
-                if(contourArea(boilerVector[i]) > maxArea)
-                {
-                    maxArea = contourArea(boilerVector[i]);
-                    index = i;
-                }
-                std::cout << "filtercontour: after boilerVecotr area check " <<std::endl;
-            }
-
-            std::cout << "after areacheck" << std::endl;
-
-            if(boilerVector.size() > 0)
-            {
-                std::vector<std::vector<cv::Point> > returnVector;
-                returnVector.push_back(boilerVector[index]);
-                std::cout << "filtercontour : before returnVector for boiler " << std::endl;
-                return returnVector;
-            }
+					if(abs(tempOne.getCenter().x - tempTwo.getCenter().x) < 14 && abs(tempOne.getWidth()-tempTwo.getWidth()) < 16)
+					{
+						
+                    		    std::cout << "passed the center checks" << std::endl;
+								std::vector<std::vector<cv::Point> > returnVector;
+                    	    
+                				if(tempOne.getCenter().x < tempTwo.getCenter().x)
+                				{
+		            		    	returnVector.push_back(boilerVector[i]);
+		            		    	returnVector.push_back(boilerVector[j]);
+		            			}
+		            			else
+		            			{
+		            		    	returnVector.push_back(boilerVector[j]);
+		            		    	returnVector.push_back(boilerVector[i]);
+		            			}
+	
+		            			Scalar color(255,0,0);
+		            			cv::drawContours(img, returnVector, -1, color, 1);
+		            			std::cout << "found boiler: " << std::endl;
+		            			std::cout << "target one center : " << tempOne.getCenter() << std::endl;
+		            			std::cout << "target two center : " << tempTwo.getCenter() << std::endl;
+		            			return returnVector;
+				
+					}
+				}	
+			}	
         }
     }
     else
@@ -336,8 +313,8 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
                     returnVector.push_back(gearVector[minI]);
                 }
 
-                Scalar color(255,0,0);
-                cv::drawContours(img, returnVector, -1, color, 10);
+             //   Scalar color(255,0,0);
+            //    cv::drawContours(img, returnVector, -1, color, 10);
                 std::cout << "found gear: " << std::endl;
                 std::cout << "target one center : " << tempOne->getCenter() << std::endl;
                 std::cout << "target two center : " << tempTwo->getCenter() << std::endl;
