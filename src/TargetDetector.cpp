@@ -25,7 +25,7 @@ Target* TargetDetector::processImage(Mat input, bool tar) {
     std::cout <<"processimg: after filter contours" << std::endl;
 
 
-    //imshow("Contours",input);
+    
     std::cout << "processimg: imshowed" << std::endl;
 
     /* if (&finalContour[0] == NULL || &finalContour[1] == NULL) {
