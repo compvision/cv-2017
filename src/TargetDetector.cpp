@@ -12,7 +12,7 @@ Target* TargetDetector::processImage(Mat input, bool tar) {
     GaussianBlur(input,input,Size(3,3),31);
     //input = canny(thresholdImage(input,53,58,228,238));
     input = thresholdImage(input,53,58,228,238);
-    //imshow("Threshold", input);
+    imshow("Threshold", input);
     input = canny(input);
     //imshow("Canny", input);
     dilate(input, input, Mat());
@@ -25,7 +25,7 @@ Target* TargetDetector::processImage(Mat input, bool tar) {
     std::cout <<"processimg: after filter contours" << std::endl;
 
 
-    //imshow("Contours",input);
+    imshow("Contours",input);
     std::cout << "processimg: imshowed" << std::endl;
 
     /* if (&finalContour[0] == NULL || &finalContour[1] == NULL) {
