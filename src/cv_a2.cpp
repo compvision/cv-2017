@@ -23,7 +23,7 @@ int main(int argc, char *argv[]){
     while(cv::waitKey(30) != 27)
     {
         rawImg = cap -> getImage();
-        Target* t = detector->processImage(rawImg, false);
+        Target* t = detector->processImage(rawImg, true);
         cv::imshow("Data", rawImg);
 
         if(t != NULL)

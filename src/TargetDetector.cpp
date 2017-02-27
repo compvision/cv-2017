@@ -12,39 +12,35 @@ Target* TargetDetector::processImage(Mat input, bool tar) {
     GaussianBlur(input,input,Size(3,3),31);
     //input = canny(thresholdImage(input,53,58,228,238));
     input = thresholdImage(input,53,58,228,238);
-    imshow("Threshold", input);
+   // imshow("Threshold", input);
     input = canny(input);
     //imshow("Canny", input);
     dilate(input, input, Mat());
 
     std::vector<std::vector<Point> > contours = contour(input);
     // std::cout << "not contours" << std::endl;
-    std::cout << "processimg: before filter contours" << std::endl;
     std::vector<std::vector<Point> > finalContour = filterContours(contours, input, tar);
 
-    std::cout <<"processimg: after filter contours" << std::endl;
 
-
-    imshow("Contours",input);
-    std::cout << "processimg: imshowed" << std::endl;
+  //  imshow("Contours",input);
 
     /* if (&finalContour[0] == NULL || &finalContour[1] == NULL) {
          //std::cout << "Null" << std::endl;
          return NULL;
      }*/
 
-    std::cout << "processimg: before contour size check" << std::endl;
+   
     std::cout << finalContour.size() << std::endl;
-    std::cout << "processimg: after contour size check" << std::endl;
+ 
 
     if(finalContour.size() == 0)
     {
         return NULL;
     }
     else {
-        std::cout << "Making Target" << std::endl;
+
         Target* toReturn = new Target(finalContour);
-        std::cout << "Made Target" << std::endl;
+
         toReturn -> setTar(tar);
         return toReturn;
     }
@@ -132,7 +128,7 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
 			cv::Point2f corners[4];			
 			rect.points(corners);
 
-            std::cout << " corners " << sizeof(corners) << std::endl;
+            //std::cout << " corners " << sizeof(corners) << std::endl;
             std::vector<cv::Point> cornersInt;
             for(int i = 0 ; i < 4; i++)
             {
@@ -250,7 +246,7 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
 
                     if(duplicate == false && (tempTwo.getWidth() < tempTwo.getHeight() ))
                     {
-						if(tempTwo.getHeight()/tempTwo.getWidth() < 3.3 && tempTwo.getHeight()/tempTwo.getWidth() > 1.7)
+						if(tempTwo.getHeight()/tempTwo.getWidth() < 3.5 && tempTwo.getHeight()/tempTwo.getWidth() > 1.5)
                         	gearVector.push_back(outputContour);
                     }
                 }
@@ -265,8 +261,8 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
             std::cout << "center of gear vector index " << j << " = " << temp.getCenter() << std::endl;
         }
 
-        std::cout << "before for loop gear Vector size : " << gearVector.size() << std::endl;
-        double minVal = 10000000;
+     //   std::cout << "before for loop gear Vector size : " << gearVector.size() << std::endl;
+    /*    double minVal = 10000000;
         int minI = 0;
         int minK = 1;
         for( int i = 0; i < gearVector.size(); i++)
@@ -313,8 +309,8 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
                     returnVector.push_back(gearVector[minI]);
                 }
 
-             //   Scalar color(255,0,0);
-            //    cv::drawContours(img, returnVector, -1, color, 10);
+                Scalar color(255,0,0);
+                cv::drawContours(img, returnVector, -1, color, 10);
                 std::cout << "found gear: " << std::endl;
                 std::cout << "target one center : " << tempOne->getCenter() << std::endl;
                 std::cout << "target two center : " << tempTwo->getCenter() << std::endl;
@@ -322,6 +318,46 @@ std::vector<std::vector<Point> > TargetDetector::filterContours(std::vector<std:
                 delete tempTwo;
                 return returnVector;
             }
+        }*/
+
+		if(gearVector.size() > 0)
+        {
+			for(int i = 0; i < gearVector.size(); i++)
+			{
+                std::cout << "i : " << i << std::endl;
+				Target tempOne(gearVector[i]);
+				for(int j = i+1; j < gearVector.size(); j++)
+				{
+                    std::cout << "j: " << j << std::endl;
+					Target tempTwo(gearVector[j]);
+
+					if(abs(tempOne.getCenter().y - tempTwo.getCenter().y) < 27 && abs(tempOne.getHeight()-tempTwo.getHeight()) < 35 )
+					{
+						
+                    		    std::cout << "passed the center checks" << std::endl;
+								std::vector<std::vector<cv::Point> > returnVector;
+                    	    
+                				if(tempOne.getCenter().x < tempTwo.getCenter().x)
+                				{
+		            		    	returnVector.push_back(gearVector[i]);
+		            		    	returnVector.push_back(gearVector[j]);
+		            			}
+		            			else
+		            			{
+		            		    	returnVector.push_back(gearVector[j]);
+		            		    	returnVector.push_back(gearVector[i]);
+		            			}
+	
+		            			Scalar color(255,0,0);
+		            			cv::drawContours(img, returnVector, -1, color, 5);
+		            			std::cout << "found boiler: " << std::endl;
+		            			std::cout << "target one center : " << tempOne.getCenter() << std::endl;
+		            			std::cout << "target two center : " << tempTwo.getCenter() << std::endl;
+		            			return returnVector;
+				
+					}
+				}	
+			}
         }
     }
     std::cout << "filtercontour: before return an empty vector "<<  std::endl;
