@@ -54,6 +54,7 @@ int main(int argc, char* argv[])
 
 	int ping = 1;
 
+
     while(cv::waitKey(30) != 27)
     {
 		cv::Mat background(Size(1000,1000), CV_8UC1, Scalar(255, 255, 255 ));
@@ -194,7 +195,7 @@ int main(int argc, char* argv[])
 	   	//GaussianBlur(image,image,Size(3,3),31);
 	    //if (config.getIsHeadless()==0)
 		//{}
-	  	//imshow("Live Video Feed", image);
+	  	//imshow("Live Video Feed", image);       
     }
     return 0;
 }
